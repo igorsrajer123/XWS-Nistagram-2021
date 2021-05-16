@@ -1,7 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/gorilla/mux"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	router := mux.NewRouter()
+	router.StrictSlash(true)
+
+	fmt.Println("Post Service started...")
 }

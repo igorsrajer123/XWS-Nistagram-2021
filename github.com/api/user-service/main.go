@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,4 +15,6 @@ func main() {
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
+
+	fmt.Println("User Service started...")
 }

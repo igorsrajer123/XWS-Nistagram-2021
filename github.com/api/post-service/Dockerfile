@@ -8,6 +8,6 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-RUN go build -o user-service
+RUN go build -o post-service
 EXPOSE 8000
-CMD ["./user-service"]
+CMD ["./post-service"]
