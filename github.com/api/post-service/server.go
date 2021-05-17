@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/api/post-service/repository"
 )
 
@@ -21,4 +23,9 @@ func NewPostServer() (*PostServer, error) {
 
 func (server *PostServer) CloseDB() error {
 	return server.postRepo.Close()
+}
+
+func (postServer *PostServer) GetAllPostsHandler(w http.ResponseWriter, req *http.Request) {
+	allPosts := postServer.postRepo.GetAllPosts()
+	RenderJSON(w, allPosts)
 }

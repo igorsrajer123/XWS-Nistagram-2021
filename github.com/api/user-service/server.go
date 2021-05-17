@@ -1,6 +1,10 @@
 package main
 
 import (
+	"mime"
+	"net/http"
+
+	"github.com/api/user-service/dto"
 	"github.com/api/user-service/repository"
 )
 
@@ -21,4 +25,31 @@ func NewUserServer() (*UserServer, error) {
 
 func (server *UserServer) CloseDB() error {
 	return server.userRepo.Close()
+}
+
+func (userServer *UserServer) GetAllUsersHandler(w http.ResponseWriter, req *http.Request) {
+	allUsers := userServer.userRepo.GetAllUsers()
+	RenderJSON(w, allUsers)
+}
+
+func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, req *http.Request) {
+	contentType := req.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	user, err := DecodeBody(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	id := userServer.userRepo.CreateUser(user.Email, user.Password, user.FirstName, user.LastName)
+	RenderJSON(w, dto.ResponseId{Id: id})
 }

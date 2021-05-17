@@ -42,3 +42,10 @@ func (userRepo *PostRepository) Close() error {
 	db.Close()
 	return nil
 }
+
+func (postRepo *PostRepository) GetAllPosts() []model.Post {
+	var posts []model.Post
+	postRepo.db.Preload("Tags").Find(&posts)
+
+	return posts
+}

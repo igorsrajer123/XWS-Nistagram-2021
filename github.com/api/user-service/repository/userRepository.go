@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -42,4 +43,31 @@ func (userRepo *UserRepository) Close() error {
 
 	db.Close()
 	return nil
+}
+
+func (userRepo *UserRepository) GetAllUsers() []model.User {
+	var users []model.User
+	userRepo.db.Find(&users)
+
+	return users
+}
+
+func (userRepo *UserRepository) CreateUser(email string, password string, firstName string, lastName string) int {
+	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	user := model.User{
+		Email:     email,
+		Password:  string(passHash),
+		FirstName: firstName,
+		LastName:  lastName}
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("New hashed user password is: " + user.Password)
+
+	userRepo.db.Create(&user)
+
+	return int(user.ID)
 }

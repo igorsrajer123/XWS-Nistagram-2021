@@ -26,6 +26,8 @@ func main() {
 
 	defer server.CloseDB()
 
+	router.HandleFunc("/", server.GetAllPostsHandler).Methods("GET")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("Post server starting...")
