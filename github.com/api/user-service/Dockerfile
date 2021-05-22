@@ -1,7 +1,8 @@
 # Start from the latest golang base image
 FROM golang:1.16-alpine3.13
 LABEL maintainer="Igor Srajer <igorsrajer123@gmail.com>"
-WORKDIR /api
+ENV GO111MODULE=on
+WORKDIR app
 RUN apk update \
     && apk add build-base
 COPY go.mod .

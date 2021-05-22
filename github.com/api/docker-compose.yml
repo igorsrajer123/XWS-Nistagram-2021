@@ -26,23 +26,6 @@ services:
         environment: 
             - POSTGRES_PASSWORD=postgres
             - POSTGRES_USER=postgres
-    authentication-service:
-        restart: always
-        image: authentication-service:compose_build
-        build:
-            context: ./authentication-service
-            dockerfile: Dockerfile
-        networks: 
-            - backend
-        environment:
-            DBHOST: db
-            USER: postgres
-            PASSWORD: postgres
-            DBNAME: postgres
-            DBPORT: 5432
-            PORT: 8000
-        depends_on:
-            - db   
     user-service:
         restart: always
         image: user-service:compose_build
@@ -77,6 +60,23 @@ services:
             PORT: 8000
         depends_on:
             - db
+    authentication-service:
+        restart: always
+        image: authentication-service:compose_build
+        build:
+            context: ./authentication-service
+            dockerfile: Dockerfile
+        networks: 
+            - backend
+        environment:
+            DBHOST: db
+            USER: postgres
+            PASSWORD: postgres
+            DBNAME: postgres
+            DBPORT: 5432
+            PORT: 8000
+        depends_on:
+            - db   
 networks: 
     backend:
         name: nistagram

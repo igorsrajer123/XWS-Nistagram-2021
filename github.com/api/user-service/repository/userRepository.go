@@ -47,7 +47,7 @@ func (userRepo *UserRepository) Close() error {
 
 func (userRepo *UserRepository) GetAllUsers() []model.User {
 	var users []model.User
-	userRepo.db.Find(&users)
+	userRepo.db.Preload("").Find(&users)
 
 	return users
 }
