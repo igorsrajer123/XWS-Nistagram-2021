@@ -25,7 +25,7 @@ func main() {
 
 	defer server.CloseDB()
 
-	router.HandleFunc("/login", server.LoginHandler).Methods("POST")
+	router.HandleFunc("/login", LoginHandler).Methods("POST")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
