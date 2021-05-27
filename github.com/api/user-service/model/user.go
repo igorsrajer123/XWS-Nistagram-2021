@@ -1,7 +1,5 @@
 package model
 
-import "gorm.io/gorm"
-
 type User struct {
 	ID        int    `json:"id"`
 	Email     string `json:"email" gorm:"unique;not null"`

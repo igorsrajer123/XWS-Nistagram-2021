@@ -31,23 +31,18 @@ func (server *AuthServer) CloseDB() error {
 	return server.authRepo.Close()
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	authRepo, err := repository.New()
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
+func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var authdetails model.Authentication
 
-	err2 := json.NewDecoder(r.Body).Decode(&authdetails)
-	if err2 != nil {
+	err := json.NewDecoder(r.Body).Decode(&authdetails)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	fmt.Println(authdetails.Email)
 	fmt.Println(authdetails.Password)
-	correctCredentials := authRepo.CheckCredentials(authdetails.Email, authdetails.Password)
+	correctCredentials := server.authRepo.CheckCredentials(authdetails.Email, authdetails.Password)
 
 	if correctCredentials {
 		fmt.Println("OVO JE: TACNO!")
