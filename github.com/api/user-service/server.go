@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"mime"
 	"net/http"
 
 	"github.com/api/user-service/dto"
 	"github.com/api/user-service/repository"
+	"github.com/gorilla/mux"
 )
 
 type UserServer struct {
@@ -30,6 +32,17 @@ func (server *UserServer) CloseDB() error {
 func (userServer *UserServer) GetAllUsersHandler(w http.ResponseWriter, req *http.Request) {
 	allUsers := userServer.userRepo.GetAllUsers()
 	RenderJSON(w, allUsers)
+}
+
+func (userServer *UserServer) GetUserByEmailHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	email, ok := vars["email"]
+	if !ok {
+		fmt.Println("Email is missing!")
+	}
+
+	user := userServer.userRepo.GetUserByEmail(email)
+	RenderJSON(w, user)
 }
 
 func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, req *http.Request) {

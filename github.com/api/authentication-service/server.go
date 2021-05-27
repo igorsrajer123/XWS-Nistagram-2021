@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/api/authentication-service/repository"
+
+	userModel "github.com/api/user-service/model"
 )
 
 type AuthServer struct {
@@ -33,23 +34,13 @@ func (server *AuthServer) CloseDB() error {
 }
 
 func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	user := &userModel.User{}
+	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		panic(err.Error())
+		var resp = map[string]interface{}{"status": false, "message": "Invalid request!"}
+		json.NewEncoder(w).Encode(resp)
+		return
 	}
-
-	var formattedBody Login
-	err = json.Unmarshal(body, &formattedBody)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	login := repository.Login(formattedBody.Email, formattedBody.Password)
-	if login["message"] == "All is fine!" {
-		response := login
-		json.NewEncoder(w).Encode(response)
-	} else {
-		response := "Wrong email or password!"
-		json.NewEncoder(w).Encode(response)
-	}
+	resp := server.authRepo.FindOne(user.Email, user.Password)
+	json.NewEncoder(w).Encode(resp)
 }

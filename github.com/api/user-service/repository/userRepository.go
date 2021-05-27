@@ -52,6 +52,13 @@ func (userRepo *UserRepository) GetAllUsers() []model.User {
 	return users
 }
 
+func (userRepo *UserRepository) GetUserByEmail(email string) model.User {
+	var user model.User
+	userRepo.db.Where("email = ?", email).First(&user)
+	fmt.Println(email)
+	return user
+}
+
 func (userRepo *UserRepository) CreateUser(email string, password string, firstName string, lastName string) int {
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 

@@ -27,6 +27,7 @@ func main() {
 
 	router.HandleFunc("/", server.GetAllUsersHandler).Methods("GET")
 	router.HandleFunc("/", server.CreateUserHandler).Methods("POST")
+	router.HandleFunc("/getByEmail/{email}", server.GetUserByEmailHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
