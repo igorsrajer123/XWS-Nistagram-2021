@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -25,8 +26,10 @@ func main() {
 
 	defer server.CloseDB()
 
-	router.HandleFunc("/login", server.LoginHandler).Methods("POST")
-	router.HandleFunc("/getCurrentUser", server.GetUserHandler).Methods("GET")
+	handlers.AllowedOrigins([]string{"*"})
+	handlers.AllowedMethods([]string{"*"})
+	router.HandleFunc("/login", server.LoginHandler).Methods("POST", "OPTIONS")
+	router.HandleFunc("/getCurrentUser", server.GetUserHandler).Methods("GET", "OPTIONS")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
