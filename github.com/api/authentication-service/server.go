@@ -7,9 +7,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/api/authentication-service/helper"
 	"github.com/api/authentication-service/model"
 	"github.com/api/authentication-service/repository"
 	"github.com/form3tech-oss/jwt-go"
+	"github.com/gorilla/mux"
 )
 
 type AuthServer struct {
@@ -72,4 +74,15 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Println("Credentials are not correct!")
 	}
+}
+
+func (server *AuthServer) GetUserByEmailHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	email, ok := vars["email"]
+	if !ok {
+		fmt.Println("Email is missing!")
+	}
+
+	user := server.authRepo.GetUserByEmail(email)
+	helper.RenderJSON(w, user)
 }
