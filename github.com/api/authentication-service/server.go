@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
-	"github.com/api/authentication-service/helper"
 	"github.com/api/authentication-service/model"
 	"github.com/api/authentication-service/repository"
 	"github.com/form3tech-oss/jwt-go"
-	"github.com/gorilla/mux"
 )
+
+var jwtKey = []byte("my_secret_key")
 
 type AuthServer struct {
 	authRepo *repository.AuthRepository
@@ -42,13 +41,9 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(authdetails.Email)
-	fmt.Println(authdetails.Password)
 	correctCredentials := server.authRepo.CheckCredentials(authdetails.Email, authdetails.Password)
 
 	if correctCredentials {
-		fmt.Println("OVO JE: TACNO!")
-
 		expirationTime := time.Now().Add(5 * time.Minute)
 
 		claims := &model.Claims{
@@ -59,8 +54,7 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		os.Setenv("SECRET_KEY", "secret")
-		tokenString, err := token.SignedString(os.Getenv("SECRET_KEY"))
+		tokenString, err := token.SignedString(jwtKey)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -76,13 +70,37 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (server *AuthServer) GetUserByEmailHandler(w http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	email, ok := vars["email"]
-	if !ok {
-		fmt.Println("Email is missing!")
+func (server *AuthServer) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	user := server.authRepo.GetUserByEmail(email)
-	helper.RenderJSON(w, user)
+	tokenString := c.Value
+	claims := &model.Claims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if !token.Valid {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Email)))
 }
