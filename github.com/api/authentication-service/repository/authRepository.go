@@ -52,14 +52,14 @@ func (authRepo *AuthRepository) CheckCredentials(email string, password string) 
 		return false
 	}
 
-	if !ComparePasswords(password, user.Password) {
+	if !comparePasswords(password, user.Password) {
 		return false
 	}
 
 	return true
 }
 
-func ComparePasswords(providedPassword string, userPassword string) bool {
+func comparePasswords(providedPassword string, userPassword string) bool {
 	passErr := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(providedPassword))
 	if passErr == bcrypt.ErrMismatchedHashAndPassword && passErr != nil {
 		fmt.Println("Wrong password!")

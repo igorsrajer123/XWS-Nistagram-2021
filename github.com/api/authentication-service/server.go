@@ -71,9 +71,11 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *AuthServer) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	//get token from cookie - cookie is named "token"
 	c, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
+			//if there is no cookie - unauthorized
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -81,13 +83,17 @@ func (server *AuthServer) GetUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	//get JWT string from cookie
 	tokenString := c.Value
 	claims := &model.Claims{}
 
+	//parse JWT string and store it into "claims"
+	//this method checks if token is invalid - expired or if signature doesn't match
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
 
+	//it it's invalid - unauthorized
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
 			w.WriteHeader(http.StatusUnauthorized)
