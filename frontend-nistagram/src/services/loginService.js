@@ -12,9 +12,10 @@ async function login(credentials) {
     }).catch(e => console.error(e));
 
     const data = await response.json();
-
     return data;
 }
+
+
 
 export default {
     login

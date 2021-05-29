@@ -32,7 +32,6 @@ export default class Login extends Component {
             password: this.state.password
         };
 
-        console.log(object)
         const ret = await LoginService.login(object);
     }
 
@@ -59,7 +58,7 @@ export default class Login extends Component {
             <div className="loginRight">
                 <div className="loginBox">
                 <input placeholder="Email" type="text" className="loginInput" onChange={this.emailInputChange} />
-                <input placeholder="Password" type="text" className="loginInput" onChange={this.passwordInputChange}/>
+                <input placeholder="Password" type="password" className="loginInput" onChange={this.passwordInputChange}/>
                 <button className="loginButton" onClick={this.login}>Log In</button>
                 <span className="loginForgot">Forgot Password?</span>
                 <button className="registrationLoginButton" onClick={this.registrationPageClick}>

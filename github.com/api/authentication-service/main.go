@@ -26,12 +26,17 @@ func main() {
 
 	defer server.CloseDB()
 
-	handlers.AllowedOrigins([]string{"*"})
-	handlers.AllowedMethods([]string{"*"})
-	router.HandleFunc("/login", server.LoginHandler).Methods("POST", "OPTIONS")
-	router.HandleFunc("/getCurrentUser", server.GetUserHandler).Methods("GET", "OPTIONS")
+	headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	origins := handlers.AllowedOrigins([]string{"*"})
+	credentials := handlers.AllowCredentials()
 
-	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
+	router.HandleFunc("/login", server.LoginHandler).Methods("POST")
+	router.HandleFunc("/getCurrentUser", server.GetUserHandler).Methods("GET")
+
+	corsHandler := handlers.CORS(headers, methods, origins, credentials)
+
+	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: corsHandler(router)}
 	go func() {
 		log.Println("Authentication server starting...")
 		if err := srv.ListenAndServe(); err != nil {

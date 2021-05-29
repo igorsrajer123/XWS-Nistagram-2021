@@ -33,12 +33,6 @@ func (server *AuthServer) CloseDB() error {
 }
 
 func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length")
-	w.Header().Set("Access-Control-Allow-Methods", "*")
-	w.Header().Set("Access-Control-Expose-Headers", "token")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	var authdetails model.Authentication
 
 	err := json.NewDecoder(r.Body).Decode(&authdetails)
@@ -48,7 +42,6 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	correctCredentials := server.authRepo.CheckCredentials(authdetails.Email, authdetails.Password)
-
 	if correctCredentials {
 		expirationTime := time.Now().Add(5 * time.Minute)
 
@@ -71,7 +64,12 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Value:   tokenString,
 			Expires: expirationTime,
 		})
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("200 - OK"))
 	} else {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("404 - User Not Found"))
 		fmt.Println("Credentials are not correct!")
 	}
 }

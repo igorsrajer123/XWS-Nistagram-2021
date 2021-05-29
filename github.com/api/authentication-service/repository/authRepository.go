@@ -47,7 +47,7 @@ func (authRepo *AuthRepository) Close() error {
 func (authRepo *AuthRepository) CheckCredentials(email string, password string) bool {
 	user := &userModel.User{}
 
-	if authRepo.db.Where("email = ? ", email).First(&user) == nil {
+	if result := authRepo.db.Where("email = ? ", email).First(&user); result.Error != nil {
 		fmt.Println("User not found!")
 		return false
 	}
