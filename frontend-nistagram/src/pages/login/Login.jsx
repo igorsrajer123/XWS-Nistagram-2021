@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import "./login.css";
 import background from "./../../assets/wallpaper.webp";
 import LoginService from "./../../services/loginService";
+import RegistrationModal from "./../registration/RegistrationModal";
 
 export default class Login extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        this.child = React.createRef();
 
         this.state = {
             email: "",
@@ -18,7 +21,10 @@ export default class Login extends Component {
         this.login = this.login.bind(this);
     }
 
-    registrationPageClick = () => window.location.href = "http://localhost:3000/registration";
+    registrationPageClick = (e) => {
+        e.preventDefault();
+        this.child.current.toggleModal();
+    }
 
     emailInputChange = (event) => this.setState({email : event.target.value});
 
@@ -45,27 +51,30 @@ export default class Login extends Component {
             }}
         >
             <div className="loginWrapper">
-            <div className="loginLeft">
-                <h3 className="loginLogo">Ništagram</h3>
-                <span className="loginDescription">
-                <b>
-                    <i>
-                    Connect with friends and the world around you on Ništagram! :)
-                    </i>
-                </b>
-                </span>
-            </div>
-            <div className="loginRight">
-                <div className="loginBox">
-                <input placeholder="Email" type="text" className="loginInput" onChange={this.emailInputChange} />
-                <input placeholder="Password" type="password" className="loginInput" onChange={this.passwordInputChange}/>
-                <button className="loginButton" onClick={this.login}>Log In</button>
-                <span className="loginForgot">Forgot Password?</span>
-                <button className="registrationLoginButton" onClick={this.registrationPageClick}>
-                    Create a New Account
-                </button>
+                <div className="loginLeft">
+                    <h3 className="loginLogo">Ništagram</h3>
+                    <span className="loginDescription">
+                    <b>
+                        <i>
+                        Connect with friends and the world <br/> around you on Ništagram! :)
+                        </i>
+                    </b>
+                    </span>
                 </div>
-            </div>
+                <div className="loginCenter">
+                    <RegistrationModal ref={this.child} />
+                </div>
+                <div className="loginRight">
+                    <div className="loginBox">
+                        <input placeholder="Email" type="text" className="loginInput" onChange={this.emailInputChange} />
+                        <input placeholder="Password" type="password" className="loginInput" onChange={this.passwordInputChange}/>
+                        <button className="loginButton" onClick={this.login}>Log In</button>
+                        <span className="loginForgot">Forgot Password?</span>
+                        <button className="registrationLoginButton" onClick={this.registrationPageClick}>
+                            Create a New Account
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         );

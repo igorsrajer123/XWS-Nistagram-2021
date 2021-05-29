@@ -47,32 +47,37 @@ func (userRepo *UserRepository) Close() error {
 
 func (userRepo *UserRepository) GetAllUsers() []model.User {
 	var users []model.User
-	userRepo.db.Preload("").Find(&users)
+	userRepo.db.Find(&users)
 
 	return users
+}
+
+func (userRepo *UserRepository) GetUserById(id int) model.User {
+	var user model.User
+	userRepo.db.Where("id = ?", id).First(&user)
+	return user
 }
 
 func (userRepo *UserRepository) GetUserByEmail(email string) model.User {
 	var user model.User
 	userRepo.db.Where("email = ?", email).First(&user)
-	fmt.Println(email)
 	return user
 }
 
-func (userRepo *UserRepository) CreateUser(email string, password string, firstName string, lastName string) int {
+func (userRepo *UserRepository) CreateUser(email string, password string, firstName string, lastName string, age int, phoneNumber string) int {
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	user := model.User{
-		Email:     email,
-		Password:  string(passHash),
-		FirstName: firstName,
-		LastName:  lastName}
+		Email:       email,
+		Password:    string(passHash),
+		FirstName:   firstName,
+		LastName:    lastName,
+		Age:         age,
+		PhoneNumber: phoneNumber}
 
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	fmt.Println("New hashed user password is: " + user.Password)
 
 	userRepo.db.Create(&user)
 

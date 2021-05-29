@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/api/user-service/dto"
+	"github.com/api/user-service/model"
 )
 
 func RenderJSON(w http.ResponseWriter, v interface{}) {
@@ -18,12 +19,25 @@ func RenderJSON(w http.ResponseWriter, v interface{}) {
 	w.Write(js)
 }
 
-func DecodeBody(r io.Reader) (*dto.UserDto, error) {
+func DecodeBody(r io.Reader) (*model.User, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
-	var rt dto.UserDto
+	var rt model.User
 	if err := dec.Decode(&rt); err != nil {
 		return nil, err
 	}
 	return &rt, nil
+}
+
+func FromUserToUserDto(user model.User) dto.UserDto {
+	var userDto dto.UserDto
+
+	userDto.ID = user.ID
+	userDto.Email = user.Email
+	userDto.FirstName = user.FirstName
+	userDto.LastName = user.LastName
+	userDto.Age = user.Age
+	userDto.PhoneNumber = user.PhoneNumber
+
+	return userDto
 }

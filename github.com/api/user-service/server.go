@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
+	"strconv"
 
 	"github.com/api/user-service/dto"
 	"github.com/api/user-service/repository"
@@ -31,7 +32,30 @@ func (server *UserServer) CloseDB() error {
 
 func (userServer *UserServer) GetAllUsersHandler(w http.ResponseWriter, req *http.Request) {
 	allUsers := userServer.userRepo.GetAllUsers()
-	RenderJSON(w, allUsers)
+
+	var usersDto []dto.UserDto
+
+	for _, oneUser := range allUsers {
+		usersDto = append(usersDto, FromUserToUserDto(oneUser))
+	}
+
+	RenderJSON(w, usersDto)
+}
+
+func (userServer *UserServer) GetUserByIdHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["id"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	user := userServer.userRepo.GetUserById(intId)
+	RenderJSON(w, FromUserToUserDto(user))
 }
 
 func (userServer *UserServer) GetUserByEmailHandler(w http.ResponseWriter, req *http.Request) {
@@ -42,7 +66,7 @@ func (userServer *UserServer) GetUserByEmailHandler(w http.ResponseWriter, req *
 	}
 
 	user := userServer.userRepo.GetUserByEmail(email)
-	RenderJSON(w, user)
+	RenderJSON(w, FromUserToUserDto(user))
 }
 
 func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, req *http.Request) {
@@ -63,6 +87,6 @@ func (userServer *UserServer) CreateUserHandler(w http.ResponseWriter, req *http
 		return
 	}
 
-	id := userServer.userRepo.CreateUser(user.Email, user.Password, user.FirstName, user.LastName)
+	id := userServer.userRepo.CreateUser(user.Email, user.Password, user.FirstName, user.LastName, user.Age, user.PhoneNumber)
 	RenderJSON(w, dto.ResponseId{Id: id})
 }

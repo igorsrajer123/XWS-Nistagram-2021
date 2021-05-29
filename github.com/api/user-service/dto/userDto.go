@@ -1,10 +1,12 @@
 package dto
 
 type UserDto struct {
-	Email     string `json:"email" gorm:"unique;not null"`
-	Password  string `json:"password" gorm:"not null"`
-	FirstName string `json:"firstName" gorm:"not null"`
-	LastName  string `json:"lastName" gorm:"not null"`
+	ID          int    `json:"id" gorm:"primaryKey"`
+	Email       string `json:"email" gorm:"unique;not null"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Age         int    `json:"age"`
+	PhoneNumber string `json:"phoneNumber"`
 }
 
 type ResponseId struct {
