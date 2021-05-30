@@ -26,15 +26,14 @@ func main() {
 
 	defer server.CloseDB()
 
-	headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	headers := handlers.AllowedHeaders([]string{"DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since", "Cache-Control", "Content-Type", "Origin", "Accept", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
 	origins := handlers.AllowedOrigins([]string{"*"})
-	credentials := handlers.AllowCredentials()
 
 	router.HandleFunc("/login", server.LoginHandler).Methods("POST")
 	router.HandleFunc("/getCurrentUser", server.GetUserHandler).Methods("GET")
 
-	corsHandler := handlers.CORS(headers, methods, origins, credentials)
+	corsHandler := handlers.CORS(headers, methods, origins)
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: corsHandler(router)}
 	go func() {

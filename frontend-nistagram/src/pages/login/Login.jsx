@@ -5,8 +5,8 @@ import LoginService from "./../../services/loginService";
 import RegistrationModal from "./../registration/RegistrationModal";
 
 export default class Login extends Component {
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
 
         this.child = React.createRef();
 
