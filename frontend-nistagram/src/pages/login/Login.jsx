@@ -12,7 +12,8 @@ export default class Login extends Component {
 
         this.state = {
             email: "",
-            password: ""
+            password: "",
+            loginErrorVisible: false
         }
 
         this.registrationPageClick = this.registrationPageClick.bind(this);
@@ -39,6 +40,14 @@ export default class Login extends Component {
         };
 
         const ret = await LoginService.login(object);
+        
+        if(ret == 200){
+            this.setState({loginErrorVisible: false});
+            window.location.href = "http://localhost:3000/userProfile";
+        }
+
+        if(ret == 401)
+            this.setState({loginErrorVisible: true});
     }
 
     render() {
@@ -68,6 +77,7 @@ export default class Login extends Component {
                     <div className="loginBox">
                         <input placeholder="Email" type="text" className="loginInput" onChange={this.emailInputChange} />
                         <input placeholder="Password" type="password" className="loginInput" onChange={this.passwordInputChange}/>
+                        <p style={{color: 'red', fontWeight: 'bold', fontSize: '20px',visibility: this.state.loginErrorVisible ? 'visible' : 'hidden'}} className="loginWarning">Wrong Email or Password!</p>
                         <button className="loginButton" onClick={this.login}>Log In</button>
                         <span className="loginForgot">Forgot Password?</span>
                         <button className="registrationLoginButton" onClick={this.registrationPageClick}>

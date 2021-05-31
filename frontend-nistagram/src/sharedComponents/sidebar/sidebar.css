@@ -1,0 +1,64 @@
+.sidebar{
+    flex: 2;
+    height: calc(100vh - 50px);
+    position: sticky;
+}
+
+.sidebarWrapper{
+    padding: 15px;
+}
+
+.sidebarUserInfo{
+    margin: 5px;
+    border-style: ridge;
+    width: 100%;
+    background-color: lightsteelblue;
+}
+
+.userInfo{
+    margin-top: 25px;
+    margin-left: 20px;
+    font-family: Noto Sans, sans-serif;
+}
+
+.userButtons{
+    display: flex;
+    flex-direction: column;
+}
+
+.changeUserInfo{
+    width: 100%;
+    border: none;
+    padding: 7px;
+    border-radius: 5px;
+    background-color: green;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+}
+
+.changeUserInfo:hover {
+    background-color: white;
+    color: green;
+    border: 3px dotted green;
+}
+
+.changeUserPassword {
+    margin-top: 3px;
+    width: 100%;
+    border: none;
+    padding: 7px;
+    border-radius: 5px;
+    background-color: red;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+}
+
+.changeUserPassword:hover {
+    background-color: white;
+    color: red;
+    border: 3px double red;
+}

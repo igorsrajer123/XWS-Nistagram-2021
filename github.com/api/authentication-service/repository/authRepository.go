@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"golang.org/x/crypto/bcrypt"
@@ -67,4 +68,15 @@ func comparePasswords(providedPassword string, userPassword string) bool {
 	}
 
 	return true
+}
+
+func (authRepo *AuthRepository) GetUserByEmail(email string) userModel.User {
+	user := &userModel.User{}
+
+	if result := authRepo.db.Where("email = ? ", email).First(&user); result.Error != nil {
+		fmt.Println("User not found!")
+		log.Fatal(result.Error)
+	}
+
+	return *user
 }

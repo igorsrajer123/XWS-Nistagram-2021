@@ -1,4 +1,3 @@
-
 async function login(credentials) {
 
     const url = "http://localhost:8000/api/auth/login";  
@@ -11,12 +10,25 @@ async function login(credentials) {
         body: JSON.stringify(credentials)
     }).catch(e => console.error(e));
 
-    const data = await response.json();
-    return data;
+    return response.status;
 }
 
+async function getCurrentUser() {
+    const url = "http://localhost:8000/api/auth/getCurrentUser";  
+    const response = await fetch(url);
+    const data = await response.text();
+    
+    if(response.status == 401)
+        window.location.href = "/";
 
+    const newUrl = "http://localhost:8000/api/user/checkEmailUnique/" + data;
+    const newResponse = await fetch(newUrl);
+    const newData = await newResponse.json();
+
+    return newData;
+}
 
 export default {
-    login
+    login,
+    getCurrentUser
 }

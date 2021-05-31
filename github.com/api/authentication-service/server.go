@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -64,13 +63,9 @@ func (server *AuthServer) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Value:   tokenString,
 			Expires: expirationTime,
 		})
-
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("200 - OK"))
 	} else {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("404 - User Not Found"))
-		fmt.Println("Credentials are not correct!")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
 	}
 }
 
@@ -112,5 +107,5 @@ func (server *AuthServer) GetUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Email)))
+	w.Write([]byte(claims.Email))
 }

@@ -1,0 +1,57 @@
+.userInformationModal {
+    position: absolute;
+    top: 25%;
+    left: 38%;
+    background-color: lightgray;
+    height: 450px;
+    width: 450px;
+    overflow: 'auto';
+    padding: '20px';
+    align-items: center;
+    font-family: "Trebuchet MS", sans-serif;
+}
+
+.userInfoTop{
+    height: 80%;
+    width: 85%;
+    margin-top: 2%;
+    margin-left: 7%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.userInfoBottom{
+    height: 15%;
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+.userInfo1{
+    margin: 10px;
+    width: 70%;
+}
+
+.userInfo1:focus {
+    outline: none;
+}
+
+.saveChanges{
+    margin: 0px;
+    color: green;
+    margin-top: 5px;
+    height: 40px;
+    width: 200px;
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px;
+    display: inline-block;
+    text-align: center;
+    background-color: #42b72a;
+    cursor: pointer;
+}
