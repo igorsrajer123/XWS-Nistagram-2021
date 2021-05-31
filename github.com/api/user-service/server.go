@@ -58,7 +58,7 @@ func (userServer *UserServer) GetUserByIdHandler(w http.ResponseWriter, req *htt
 	RenderJSON(w, FromUserToUserDto(user))
 }
 
-func (userServer *UserServer) GetUserByEmailHandler(w http.ResponseWriter, req *http.Request) {
+func (userServer *UserServer) CheckEmailUnique(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	email, ok := vars["email"]
 	if !ok {

@@ -12,11 +12,24 @@ async function registration(newUser) {
     }).catch(e => console.error(e));
 
     const data = await response.json();
+    window.location.reload();
+    return data;
+}
+
+async function checkEmailUnique(email) {
+
+    const url = "http://localhost:8000/api/user/checkEmailUnique/" + email;
+    const response = await fetch(url);
+
+    const data = await response.json();
+    
+    console.log(data);
     return data;
 }
 
 
 
 export default {
-    login
+    registration,
+    checkEmailUnique
 }
