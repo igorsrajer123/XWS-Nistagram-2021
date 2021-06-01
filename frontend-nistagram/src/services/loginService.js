@@ -21,7 +21,7 @@ async function getCurrentUser() {
     if(response.status == 401)
         window.location.href = "/";
 
-    const newUrl = "http://localhost:8000/api/user/checkEmailUnique/" + data;
+    const newUrl = "http://localhost:8000/api/user/getUserByEmail/" + data;
     const newResponse = await fetch(newUrl);
     const newData = await newResponse.json();
 

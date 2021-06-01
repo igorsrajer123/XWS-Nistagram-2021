@@ -27,8 +27,10 @@ func main() {
 
 	router.HandleFunc("/getAllUsers", server.GetAllUsersHandler).Methods("GET")
 	router.HandleFunc("/createUser", server.CreateUserHandler).Methods("POST")
-	router.HandleFunc("/checkEmailUnique/{email}", server.CheckEmailUnique).Methods("GET")
+	router.HandleFunc("/checkUserExists/{email}", server.checkUserExists).Methods("GET")
 	router.HandleFunc("/getById/{id}", server.GetUserByIdHandler).Methods("GET")
+	router.HandleFunc("/getUserByEmail/{email}", server.GetUserByEmailHandler).Methods("GET")
+	router.HandleFunc("/editUserInfo", server.EditUserHandler).Methods("PUT")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

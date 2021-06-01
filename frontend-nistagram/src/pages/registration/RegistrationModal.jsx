@@ -17,12 +17,13 @@ export default class RegistrationModal extends Component {
             lastName: "",
             age: 0,
             phoneNumber: "",
+            location: "",
+            website: "",
+            gender: "",
             validFirstName: true,
             validLastName: true,
             validEmail: true,
-            validPassword: true,
-            validAge: true,
-            validPhone: true
+            validPassword: true
 		}
 
 		this.toggleModal = this.toggleModal.bind(this);
@@ -33,6 +34,9 @@ export default class RegistrationModal extends Component {
         this.lastNameInputChange = this.lastNameInputChange.bind(this);
         this.ageInputChange = this.ageInputChange.bind(this);
         this.phoneNumberInputChange = this.phoneNumberInputChange.bind(this);
+        this.genderInputChange = this.genderInputChange.bind(this);
+        this.locationInputChange = this.locationInputChange.bind(this);
+        this.websiteInputChange = this.websiteInputChange.bind(this);
         this.registration = this.registration.bind(this);
 	}
 
@@ -43,8 +47,6 @@ export default class RegistrationModal extends Component {
         let emailValid = false;
         let firstNameValid = false;
         let lastNameValid = false;
-        let ageValid = false;
-        let phoneNumberValid = false;
 
         if(this.state.password === this.state.confirmPassword && this.state.password != ""){
             passwordValid = true;
@@ -70,24 +72,8 @@ export default class RegistrationModal extends Component {
             this.setState({validLastName: lastNameValid});
         }
 
-        if(this.state.phoneNumber != ""){
-            phoneNumberValid = true;
-            this.setState({validPhone: phoneNumberValid});
-        }else{
-            phoneNumberValid = false;
-            this.setState({validPhone: phoneNumberValid});
-        }
-
-        if(this.state.age > 0){
-            ageValid = true;
-            this.setState({validAge: ageValid});
-        }else{
-            ageValid = false;
-            this.setState({validAge: ageValid});
-        }
-
-        const existingUser = await RegistrationService.checkEmailUnique(this.state.email);
-        if(this.state.email != "" && existingUser.id == 0){
+        const existingUser = await RegistrationService.checkUserExists(this.state.email);
+        if(this.state.email != "" && existingUser == "false"){
             emailValid = true;
             this.setState({validEmail: emailValid});
         }else{
@@ -95,14 +81,17 @@ export default class RegistrationModal extends Component {
             this.setState({validEmail: emailValid});
         }
 
-        if(firstNameValid && lastNameValid && ageValid && phoneNumberValid && passwordValid && emailValid){
+        if(firstNameValid && lastNameValid && passwordValid && emailValid){
             const object = {
                 email: this.state.email,
                 password: this.state.password,
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 age: this.state.age,
-                phoneNumber: this.state.phoneNumber
+                phoneNumber: this.state.phoneNumber,
+                gender: this.state.gender,
+                location: this.state.location,
+                website: this.state.website
             };
 
             const ret = await RegistrationService.registration(object);
@@ -131,6 +120,11 @@ export default class RegistrationModal extends Component {
 
     phoneNumberInputChange = (event) => this.setState({phoneNumber : event.target.value});
 
+    genderInputChange = (event) => this.setState({gender: event.target.value});
+
+    locationInputChange = (event) => this.setState({location : event.target.value});
+
+    websiteInputChange = (event) => this.setState({website : event.target.value});
 
     render() {
         return (
@@ -139,25 +133,35 @@ export default class RegistrationModal extends Component {
                         <h1 className="registrationTitle">User Registration</h1>
                         <p className="registrationDescription">
                             <b>Create new account fast and easy!</b><br/>
-                            <i>Fill out all the empty fields below.</i>
+                            <i>Fill out all the empty fields below.*</i>
                         </p>
                     </div>
                     <hr/>
                     <div className="registrationBottom">
                         <div className="registrationFullName">
-                            <input type="text" style={{border: this.state.validFirstName ? '' : '3px solid red'}} placeholder="First Name" className="registrationInput" onChange={this.firstNameInputChange} />
-                            <input type="text" style={{border: this.state.validLastName ? '' : '3px solid red'}} placeholder="Last Name" className="registrationInput" onChange={this.lastNameInputChange} />
+                            <input type="text" style={{border: this.state.validFirstName ? '' : '3px solid red'}} placeholder="First Name*" className="registrationInput" onChange={this.firstNameInputChange} />
+                            <input type="text" style={{border: this.state.validLastName ? '' : '3px solid red'}} placeholder="Last Name*" className="registrationInput" onChange={this.lastNameInputChange} />
                         </div>
                         <div className="registrationCredentials">
-                            <input type="text" style={{border: this.state.validEmail ? '' : '3px solid red'}} data-tip data-for="emailTip" placeholder="Email" className="registrationInputCredentials" onChange={this.emailOnInputChange} />
+                            <input type="text" style={{border: this.state.validEmail ? '' : '3px solid red'}} data-tip data-for="emailTip" placeholder="Email*" className="registrationInputCredentials" onChange={this.emailOnInputChange} />
                             <ReactTooltip id="emailTip" place="bottom" effect="solid">Email must always be unique!</ReactTooltip>
-                            <input type="password" placeholder="Password" className="registrationInputCredentials" onChange={this.passwordInputChange} />
-                            <input type="password" data-tip data-for="passwordTip" style={{border: this.state.validPassword ? '' : '3px solid red'}} placeholder="Confirm Password" className="registrationInputCredentials" onChange={this.confirmPasswordInputChange} />
+                            <input type="password" placeholder="Password*" className="registrationInputCredentials" onChange={this.passwordInputChange} />
+                            <input type="password" data-tip data-for="passwordTip" style={{border: this.state.validPassword ? '' : '3px solid red'}} placeholder="Confirm Password*" className="registrationInputCredentials" onChange={this.confirmPasswordInputChange} />
                             <ReactTooltip id="passwordTip" place="bottom" effect="solid">Passwords must always match!</ReactTooltip>
                         </div>
                         <div className="registrationOtherInfo">
-                            <input type="text" style={{border: this.state.validPhone ? '' : '3px solid red'}} placeholder="Phone Number" className="registrationInputPhone" onChange={this.phoneNumberInputChange} />
-                            <input type="text" style={{border: this.state.validAge ? '' : '3px solid red'}} placeholder="Age" className="registrationInputAge" onChange={this.ageInputChange} />
+                            <input type="text" placeholder="Phone Number" className="registrationOtherInfoInput" onChange={this.phoneNumberInputChange} />
+                            <input type="text" placeholder="Location" className="registrationOtherInfoInput" onChange={this.locationInputChange} />
+                            <input type="text" placeholder="Website" className="registrationOtherInfoInput" onChange={this.websiteInputChange} />
+                        </div>
+                        <div className="registrationOtherInfo2">
+                            <input type="text" placeholder="Age" className="registrationInputAge" onChange={this.ageInputChange} />
+                            <select className="registrationInputGender" onChange={this.genderInputChange}>
+                                <option disabled selected value="None">Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="None">Not Specified</option>
+                            </select>
                         </div>
                         <div className="registrationDone">
                             <button className="register" onClick={this.registration}>Register</button>

@@ -12,7 +12,10 @@
     margin: 5px;
     border-style: ridge;
     width: 100%;
-    background-color: lightsteelblue;
+    background-color: lightsteelblue; 
+    height: auto !important;
+    overflow: hidden;
+    min-height: 100px;
 }
 
 .userInfo{

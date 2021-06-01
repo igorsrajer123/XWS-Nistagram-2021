@@ -64,7 +64,19 @@ func (userRepo *UserRepository) GetUserByEmail(email string) model.User {
 	return user
 }
 
-func (userRepo *UserRepository) CreateUser(email string, password string, firstName string, lastName string, age int, phoneNumber string) int {
+func (userRepo *UserRepository) CheckIfUserExistsByEmail(email string) bool {
+	var user model.User
+
+	if result := userRepo.db.Where("email = ? ", email).First(&user); result.Error != nil {
+		fmt.Println("User not found!")
+		return false
+	}
+
+	return true
+}
+
+func (userRepo *UserRepository) CreateUser(email string, password string, firstName string, lastName string,
+	age int, phoneNumber string, gender string, location string, website string) int {
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	user := model.User{
@@ -73,7 +85,10 @@ func (userRepo *UserRepository) CreateUser(email string, password string, firstN
 		FirstName:   firstName,
 		LastName:    lastName,
 		Age:         age,
-		PhoneNumber: phoneNumber}
+		PhoneNumber: phoneNumber,
+		Gender:      gender,
+		Location:    location,
+		Website:     website}
 
 	if err != nil {
 		fmt.Println(err)
@@ -82,4 +97,27 @@ func (userRepo *UserRepository) CreateUser(email string, password string, firstN
 	userRepo.db.Create(&user)
 
 	return int(user.ID)
+}
+
+func (userRepo *UserRepository) EditUser(email string, firstName string, lastName string, age int, phoneNumber string,
+	location string, website string, description string) model.User {
+
+	user := &model.User{}
+	userRepo.db.Where("email = ?", email).First(&user)
+
+	fmt.Println(user)
+
+	user.Age = age
+	user.Description = description
+	user.FirstName = firstName
+	user.LastName = lastName
+	user.Age = age
+	user.PhoneNumber = phoneNumber
+	user.Website = website
+	user.Location = location
+
+	userRepo.db.Save(&user)
+	fmt.Println(user)
+
+	return *user
 }

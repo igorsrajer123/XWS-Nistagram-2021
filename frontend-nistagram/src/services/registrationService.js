@@ -16,14 +16,16 @@ async function registration(newUser) {
     return data;
 }
 
-async function checkEmailUnique(email) {
+async function checkUserExists(email) {
 
-    const url = "http://localhost:8000/api/user/checkEmailUnique/" + email;
+    const url = "http://localhost:8000/api/user/checkUserExists/" + email;
     const response = await fetch(url);
 
-    const data = await response.json();
-    
-    console.log(data);
+    if(response.status == 404)
+        return "true"
+
+    const data = await response.text();
+
     return data;
 }
 
@@ -31,5 +33,5 @@ async function checkEmailUnique(email) {
 
 export default {
     registration,
-    checkEmailUnique
+    checkUserExists
 }

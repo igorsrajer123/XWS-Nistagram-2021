@@ -38,6 +38,11 @@ func FromUserToUserDto(user model.User) dto.UserDto {
 	userDto.LastName = user.LastName
 	userDto.Age = user.Age
 	userDto.PhoneNumber = user.PhoneNumber
+	userDto.Gender = user.Gender
+	userDto.PrivateProfile = user.PrivateProfile
+	userDto.Description = user.Description
+	userDto.Location = user.Location
+	userDto.Website = user.Website
 
 	return userDto
 }
