@@ -16,9 +16,15 @@ export default class UserProfile extends Component {
             lastName: "",
             email: "",
             phoneNumber: "",
-            age: 0
+            age: 0,
+            gender: "",
+            description: ""
         }
+
+        this.clickOnName = this.clickOnName.bind(this);
     }
+
+    clickOnName = () => window.location.reload();
 
     async componentDidMount(){
         const currentUser = await LoginService.getCurrentUser();
@@ -28,6 +34,7 @@ export default class UserProfile extends Component {
         this.setState({lastName: currentUser.lastName});
         this.setState({age: currentUser.age});
         this.setState({phoneNumber: currentUser.phoneNumber});
+        this.setState({description: currentUser.description});
     }
 
     render() {
@@ -43,8 +50,8 @@ export default class UserProfile extends Component {
                             </div>
                         </div>
                         <div className="profileInfo">
-                            <h4 className="profileInfoName">{this.state.firstName} {this.state.lastName}</h4>
-                            <span className="profileInfoDescription">Hello My Friends. This is my profile description lmao xD</span>
+                            <h4 className="profileInfoName" onClick={this.clickOnName}>{this.state.firstName} {this.state.lastName}</h4>
+                            <span className="profileInfoDescription">{this.state.description}</span>
                         </div>
                         <div className="profileRightBottom">
                             <Sidebar />

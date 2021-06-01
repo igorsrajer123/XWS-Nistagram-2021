@@ -50,7 +50,7 @@ export default class Sidebar extends Component {
             this.setState({showLocation: true});
 
         if(currentUser.website != "")
-            this.setState({showLocation: true});
+            this.setState({showWebsite: true});
 
         if(currentUser.gender != "" && currentUser.gender != "None")
             this.setState({showGender: true});
@@ -73,7 +73,7 @@ export default class Sidebar extends Component {
                         <p className="userInfo" style={{display: this.state.showGender ? 'block' : 'none'}}><b>Gender:</b> {this.state.gender}</p>
                         <p className="userInfo" style={{display: this.state.showPhone ? 'block' : 'none'}}><b>Contact Phone:</b> {this.state.phoneNumber}</p>
                         <p className="userInfo" style={{display: this.state.showLocation ? 'block' : 'none'}}><b>Location:</b> {this.state.location}</p>
-                        <p className="userInfo" style={{display: this.state.showWebsite ? 'block' : 'none'}}><b>Website:</b> {this.state.website}</p>
+                        <p className="userInfo" style={{display: this.state.showWebsite ? 'block' : 'none'}}><b>Website:</b> <a>{this.state.website}</a></p>
                         <div className="userButtons">
                             <button onClick={this.userInformationModal} className="changeUserInfo">Update your information</button>
                             <button onClick={this.userPasswordModal} className="changeUserPassword">Change your password</button>

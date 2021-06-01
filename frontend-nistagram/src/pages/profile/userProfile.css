@@ -38,8 +38,9 @@
 }
 
 .profileInfoName{
-    font-size: 24px;
+    font-size: 25px;
     font-family: Noto Sans, sans-serif;
+    cursor: pointer;
 }
 
 .profileInfoDescription{

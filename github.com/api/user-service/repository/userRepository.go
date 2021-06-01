@@ -105,8 +105,6 @@ func (userRepo *UserRepository) EditUser(email string, firstName string, lastNam
 	user := &model.User{}
 	userRepo.db.Where("email = ?", email).First(&user)
 
-	fmt.Println(user)
-
 	user.Age = age
 	user.Description = description
 	user.FirstName = firstName
@@ -117,7 +115,22 @@ func (userRepo *UserRepository) EditUser(email string, firstName string, lastNam
 	user.Location = location
 
 	userRepo.db.Save(&user)
-	fmt.Println(user)
 
 	return *user
+}
+
+func (userRepo *UserRepository) ChangeUserPassword(email string, newPassword string) int {
+	passHash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	user := &model.User{}
+	userRepo.db.Where("email = ?", email).First(&user)
+
+	user.Password = string(passHash)
+
+	userRepo.db.Save(&user)
+
+	return user.ID
 }

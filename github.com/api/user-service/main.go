@@ -31,6 +31,7 @@ func main() {
 	router.HandleFunc("/getById/{id}", server.GetUserByIdHandler).Methods("GET")
 	router.HandleFunc("/getUserByEmail/{email}", server.GetUserByEmailHandler).Methods("GET")
 	router.HandleFunc("/editUserInfo", server.EditUserHandler).Methods("PUT")
+	router.HandleFunc("/changePassword", server.ChangeUserPasswordHandler).Methods("PUT")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
