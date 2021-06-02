@@ -162,3 +162,47 @@ func (userServer *UserServer) ToggleProfilePrivacyHandler(w http.ResponseWriter,
 
 	userServer.userRepo.ToggleProfilePrivacy(stringId)
 }
+
+func (userServer *UserServer) SearchPublicProfilesHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	params, ok := vars["searchParams"]
+	if !ok {
+		fmt.Println("Search params is missing!")
+	}
+
+	searchResult := userServer.userRepo.SearchPublicProfiles(params)
+
+	if len(searchResult) > 0 {
+		var usersDto []dto.UserDto
+		for _, oneUser := range searchResult {
+			usersDto = append(usersDto, FromUserToUserDto(oneUser))
+		}
+
+		RenderJSON(w, usersDto)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+}
+
+func (userServer *UserServer) SearchAllProfilesHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	params, ok := vars["searchParams"]
+	if !ok {
+		fmt.Println("Search params is missing!")
+	}
+
+	searchResult := userServer.userRepo.SearchAllProfiles(params)
+
+	if len(searchResult) > 0 {
+		var usersDto []dto.UserDto
+		for _, oneUser := range searchResult {
+			usersDto = append(usersDto, FromUserToUserDto(oneUser))
+		}
+
+		RenderJSON(w, usersDto)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+}

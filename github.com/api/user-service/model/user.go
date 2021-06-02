@@ -10,7 +10,7 @@ type User struct {
 	PhoneNumber    string `json:"phoneNumber"`
 	Gender         string `json:"gender"`
 	Location       string `json:"location"`
-	PrivateProfile bool   `json:"privateProfile"`
+	PrivateProfile *bool  `json:"privateProfile" gorm:"default:false"`
 	Description    string `json:"description"`
 	Website        string `json:"website"`
 }

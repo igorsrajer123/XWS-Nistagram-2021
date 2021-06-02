@@ -33,6 +33,8 @@ func main() {
 	router.HandleFunc("/editUserInfo", server.EditUserHandler).Methods("PUT")
 	router.HandleFunc("/changePassword", server.ChangeUserPasswordHandler).Methods("PUT")
 	router.HandleFunc("/toggleProfilePrivacy/{id}", server.ToggleProfilePrivacyHandler).Methods("PUT")
+	router.HandleFunc("/searchPublicProfiles/{searchParams}", server.SearchPublicProfilesHandler).Methods("GET")
+	router.HandleFunc("/searchAllProfiles/{searchParams}", server.SearchAllProfilesHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

@@ -9,7 +9,7 @@ type UserDto struct {
 	PhoneNumber    string `json:"phoneNumber"`
 	Gender         string `json:"gender"`
 	Location       string `json:"location"`
-	PrivateProfile bool   `json:"privateProfile"`
+	PrivateProfile *bool  `json:"privateProfile"`
 	Description    string `json:"description"`
 	Website        string `json:"website"`
 }

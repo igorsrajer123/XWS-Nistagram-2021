@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
@@ -101,7 +102,6 @@ func (userRepo *UserRepository) CreateUser(email string, password string, firstN
 
 func (userRepo *UserRepository) EditUser(email string, firstName string, lastName string, age int, phoneNumber string,
 	location string, website string, description string) model.User {
-
 	user := &model.User{}
 	userRepo.db.Where("email = ?", email).First(&user)
 
@@ -136,15 +136,50 @@ func (userRepo *UserRepository) ChangeUserPassword(email string, newPassword str
 }
 
 func (userRepo *UserRepository) ToggleProfilePrivacy(id int) {
-
 	user := &model.User{}
 	userRepo.db.Where("id = ?", id).First(&user)
 
-	if user.PrivateProfile {
-		user.PrivateProfile = false
+	if *user.PrivateProfile {
+		*user.PrivateProfile = false
 	} else {
-		user.PrivateProfile = true
+		*user.PrivateProfile = true
 	}
 
 	userRepo.db.Save(&user)
+}
+
+func (userRepo *UserRepository) SearchPublicProfiles(searchParameter string) []model.User {
+	var users []model.User
+	userRepo.db.Where("private_profile = ?", false).Find(&users)
+
+	var myUsers []model.User
+	for _, oneUser := range users {
+		if strings.Contains(strings.ToLower(oneUser.Location), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.LastName), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.Location), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.FirstName)+" "+strings.ToLower(oneUser.LastName), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.LastName)+" "+strings.ToLower(oneUser.FirstName), strings.ToLower(searchParameter)) {
+
+			myUsers = append(myUsers, oneUser)
+		}
+	}
+	return myUsers
+}
+
+func (userRepo *UserRepository) SearchAllProfiles(searchParameter string) []model.User {
+	var users []model.User
+	userRepo.db.Find(&users)
+
+	var myUsers []model.User
+	for _, oneUser := range users {
+		if strings.Contains(strings.ToLower(oneUser.Location), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.LastName), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.Location), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.FirstName)+" "+strings.ToLower(oneUser.LastName), strings.ToLower(searchParameter)) ||
+			strings.Contains(strings.ToLower(oneUser.LastName)+" "+strings.ToLower(oneUser.FirstName), strings.ToLower(searchParameter)) {
+
+			myUsers = append(myUsers, oneUser)
+		}
+	}
+	return myUsers
 }
