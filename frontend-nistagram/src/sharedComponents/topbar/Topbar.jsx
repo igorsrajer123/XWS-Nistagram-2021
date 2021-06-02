@@ -9,22 +9,37 @@ export default class Topbar extends Component {
         super(props);
 
         this.state = {
-            parentUserProfile: false
+            parentUserProfile: false,
+            parentSearchPage: false,
+            parentHomePage: false,
+            searchInput: ""
         }
 
         this.goHome = this.goHome.bind(this);
         this.goToMyProfile = this.goToMyProfile.bind(this);
+        this.searchInputChange = this.searchInputChange.bind(this);
     }
 
     goHome = () => window.location.href = "http://localhost:3000/home";
 
     goToMyProfile = () => window.location.href = "http://localhost:3000/userProfile";
 
+    searchInputChange = (event) => this.setState({searchInput: event.target.value});
+
     componentDidMount() {
-        if(this.props.parentComponent == 'userProfile')
+        if(this.props.parentComponent == 'userProfile'){
             this.setState({parentUserProfile: true});
-        else
+            this.setState({parentHomePage: false});
+            this.setState({parentSearchPage: false});
+        }else if(this.props.parentComponent == 'searchPage'){
             this.setState({parentUserProfile: false});
+            this.setState({parentHomePage: false});
+            this.setState({parentSearchPage: true});
+        }else if(this.props.parentComponent == 'homePage'){
+            this.setState({parentUserProfile: false});
+            this.setState({parentHomePage: true});
+            this.setState({parentSearchPage: false});
+        }
     }
     
     render() {
@@ -35,8 +50,8 @@ export default class Topbar extends Component {
                 </div>
                 <div className="topbarCenter">
                     <div className="searchbar">
-                        <SearchIcon className="searchIcon" />
-                        <input type="text" className="searchInput" placeholder="Search for friend, post or page..." />
+                        <SearchIcon className="searchIcon" onClick={() => window.location.href="/searchPage?public=false&search=" + this.state.searchInput} />
+                        <input type="text" className="searchInput" onChange={this.searchInputChange} placeholder="Search for friend, post or page..." />
                     </div>
                 </div>
                 <div className="topbarRight">
@@ -45,7 +60,7 @@ export default class Topbar extends Component {
                                 <PersonIcon />
                                 <span className="topbarIconBadge">10</span>
                         </div>
-                        <img src={ProfilePicture} onClick={this.goToMyProfile} style={{visibility: this.state.parentUserProfile ? 'hidden' : 'visible'}} alt="" className="topbarImg"/>
+                        <img src={ProfilePicture} onClick={this.goToMyProfile} style={{visibility: this.state.parentUserProfile || this.state.parentSearchPage ? 'hidden' : 'visible'}} alt="" className="topbarImg"/>
                     </div>
                 </div>
             </div>

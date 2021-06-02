@@ -5,8 +5,8 @@ import LoginService from './../../services/loginService';
 import UserService from './../../services/userService';
 
 export default class changeUserPassword extends Component {
-    constructor(){
-		super();
+    constructor(props){
+		super(props);
 
 		this.state = {
 			isOpen: false,
@@ -53,9 +53,12 @@ export default class changeUserPassword extends Component {
     }
 
     async componentDidMount() {
-        const currentUser = await LoginService.getCurrentUser();
         
-        this.setState({email: currentUser.email});
+        if(this.props.parentComponent == 'userProfile'){
+            const currentUser = await LoginService.getCurrentUser();
+        
+            this.setState({email: currentUser.email});
+        }
     }
 
 

@@ -1,5 +1,5 @@
 
-async function editUserInfo(user) {
+async function editUserInfo(user){
 
     const url = "http://localhost:8000/api/user/editUserInfo";  
     const response = await fetch(url, {
@@ -16,7 +16,7 @@ async function editUserInfo(user) {
     return data;
 }
 
-async function changePassword(user) {
+async function changePassword(user){
     const url = "http://localhost:8000/api/user/changePassword";  
     const response = await fetch(url, {
         method: "PUT",
@@ -32,7 +32,19 @@ async function changePassword(user) {
     return data;
 }
 
+async function getUserById(id){
+    const url = "http://localhost:8000/api/user/getById/" + id;
+    const response = await fetch(url);
+
+    if(response.status == 404)
+        return null;
+    
+    const data = await response.json();
+    return data;
+}
+
 export default {
     editUserInfo,
-    changePassword
+    changePassword,
+    getUserById
 }

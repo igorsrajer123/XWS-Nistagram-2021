@@ -6,8 +6,8 @@ import { TitleSharp, TransferWithinAStationTwoTone } from '@material-ui/icons';
 import UserService from './../../services/userService';
 
 export default class changeUserInformation extends Component {
-    constructor(){
-		super();
+    constructor(props){
+		super(props);
 
 		this.state = {
 			isOpen: false,
@@ -94,16 +94,19 @@ export default class changeUserInformation extends Component {
     changeLastName = (event) => this.setState({lastName : event.target.value});
 
     async componentDidMount() {
-        const currentUser = await LoginService.getCurrentUser();
+
+        if(this.props.parentComponent == 'userProfile'){
+            const currentUser = await LoginService.getCurrentUser();
         
-        this.setState({email: currentUser.email});
-        this.setState({firstName: currentUser.firstName});
-        this.setState({lastName: currentUser.lastName});
-        this.setState({phoneNumber: currentUser.phoneNumber});
-        this.setState({age: currentUser.age});
-        this.setState({location: currentUser.location});
-        this.setState({website: currentUser.website});
-        this.setState({description : currentUser.description});
+            this.setState({email: currentUser.email});
+            this.setState({firstName: currentUser.firstName});
+            this.setState({lastName: currentUser.lastName});
+            this.setState({phoneNumber: currentUser.phoneNumber});
+            this.setState({age: currentUser.age});
+            this.setState({location: currentUser.location});
+            this.setState({website: currentUser.website});
+            this.setState({description : currentUser.description});
+        }
     }
 
     render() {

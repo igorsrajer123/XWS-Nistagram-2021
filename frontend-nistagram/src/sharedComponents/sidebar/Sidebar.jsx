@@ -5,8 +5,8 @@ import UserInformationModal from './../../pages/userInformationModals/ChangeUser
 import UserPasswordModal from './../../pages/userInformationModals/ChangeUserPassword';
 
 export default class Sidebar extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.infoRef = React.createRef();
         this.passwordRef = React.createRef();
@@ -24,38 +24,43 @@ export default class Sidebar extends Component {
             showPhone: false,
             showLocation: false,
             showWebsite: false,
-            showGender: false
+            showGender: false,
+            parentUserProfile: false,
+            parentPreviewProfile: false
         }
     }
 
     async componentDidMount(){
-        const currentUser = await LoginService.getCurrentUser();
+        if(this.props.parentComponent == 'userProfile'){
+            const currentUser = await LoginService.getCurrentUser();
         
-        this.setState({email: currentUser.email});
-        this.setState({firstName: currentUser.firstName});
-        this.setState({lastName: currentUser.lastName});
-        this.setState({phoneNumber: currentUser.phoneNumber});
-        this.setState({age: currentUser.age});
-        this.setState({gender: currentUser.gender});
-        this.setState({location: currentUser.location});
-        this.setState({website: currentUser.website});
+            this.setState({email: currentUser.email});
+            this.setState({firstName: currentUser.firstName});
+            this.setState({lastName: currentUser.lastName});
+            this.setState({phoneNumber: currentUser.phoneNumber});
+            this.setState({age: currentUser.age});
+            this.setState({gender: currentUser.gender});
+            this.setState({location: currentUser.location});
+            this.setState({website: currentUser.website});
 
-        if(currentUser.phoneNumber != "")
-            this.setState({showPhone: true});
-        
-        if(currentUser.age != "")
-            this.setState({showAge: true});
-        
-        if(currentUser.location != "")
-            this.setState({showLocation: true});
+            if(currentUser.phoneNumber != "")
+                this.setState({showPhone: true});
+            
+            if(currentUser.age != "")
+                this.setState({showAge: true});
+            
+            if(currentUser.location != "")
+                this.setState({showLocation: true});
 
-        if(currentUser.website != "")
-            this.setState({showWebsite: true});
+            if(currentUser.website != "")
+                this.setState({showWebsite: true});
 
-        if(currentUser.gender != "" && currentUser.gender != "None")
-            this.setState({showGender: true});
-        
-        console.log(this.state.showPhone);
+            if(currentUser.gender != "" && currentUser.gender != "None")
+                this.setState({showGender: true});
+
+        }else if(this.props.parentComponent == 'previewProfile'){
+            console.log("PREVIEW JE RODITELJ!");
+        }
     }
 
     userInformationModal = () => this.infoRef.current.toggleUserModal();
@@ -80,8 +85,8 @@ export default class Sidebar extends Component {
                         </div>
                     </div>
                     <div>
-                        <UserInformationModal ref={this.infoRef} />
-                        <UserPasswordModal ref={this.passwordRef} />
+                        <UserInformationModal ref={this.infoRef} parentComponent={this.props.parentComponent} />
+                        <UserPasswordModal ref={this.passwordRef} parentComponent={this.props.parentComponent} />
                     </div>
                 </div>
             </div>

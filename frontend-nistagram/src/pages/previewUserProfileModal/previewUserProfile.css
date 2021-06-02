@@ -1,0 +1,129 @@
+.previewUserModal{
+    position: absolute;
+    top: 15%;
+    left: 10%;
+    margin-top: -50px;
+    overflow-y: scroll;
+    width: 80%;
+    height: 100%;
+    overflow: 'auto';
+    background-color: whitesmoke;
+}
+
+.previewProfile{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.previewProfileTop{
+    height: 50%;
+}
+
+.previewProfileCover{
+    height: 100%;
+    position: relative;
+    border-style: groove;
+}
+
+.previewCoverImage{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.previewProfileImage{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 45%;
+    border: 3px solid white;
+}
+
+.previewProfileCenter{
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.previewProfileName{
+    font-size: 25px;
+    font-family: Noto Sans, sans-serif;
+    margin-top: 0%;
+}
+
+.previewProfileDescription{
+    font-weight: bold;
+    font-family: Noto Sans, sans-serif;
+    margin-top: 0%;
+}
+
+.previewFollowings{
+    border-style: groove;
+    border-color: dodgerblue;
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+}
+
+.previewFollowing{
+    font-size: 20px;
+    margin-right: 20px;
+    font-family: Noto Sans, sans-serif;
+    color: red;
+}
+
+.previewFollowers{
+    font-size: 20px;
+    margin-right: 20px;
+    font-family: Noto Sans, sans-serif;
+    color: dodgerblue;
+}
+
+.previewFollow{
+    font-size: 15px;
+    font-weight: bold;
+    font-family: Noto Sans, sans-serif;
+    border-style: solid;
+    border-color: white;
+    color: white;
+    height: 40px;
+    width: 120px;
+    text-align: center;
+    background-color: limegreen;
+    cursor: pointer;
+    transition: 0.7s;
+}
+
+.previewFollow:hover{
+    background-color: white;
+    color: limegreen;
+    border-style: solid;
+    border-color: lime;
+}
+
+.previewProfileBottom{
+    height: 100%;
+    display: flex;
+}
+
+.previewSidebar{
+    background-color: red;
+    flex: 2;
+    height: 100%;
+    margin-top: 10px;
+}
+
+.previewFeed{
+    flex: 4;
+    height: 100%;
+    margin-top: 10px;
+}

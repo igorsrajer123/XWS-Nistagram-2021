@@ -14,10 +14,6 @@ export default class UserProfile extends Component {
         this.state = {
             firstName: "",
             lastName: "",
-            email: "",
-            phoneNumber: "",
-            age: 0,
-            gender: "",
             description: ""
         }
 
@@ -29,11 +25,8 @@ export default class UserProfile extends Component {
     async componentDidMount(){
         const currentUser = await LoginService.getCurrentUser();
         
-        this.setState({email: currentUser.email});
         this.setState({firstName: currentUser.firstName});
         this.setState({lastName: currentUser.lastName});
-        this.setState({age: currentUser.age});
-        this.setState({phoneNumber: currentUser.phoneNumber});
         this.setState({description: currentUser.description});
     }
 
@@ -54,7 +47,7 @@ export default class UserProfile extends Component {
                             <span className="profileInfoDescription">{this.state.description}</span>
                         </div>
                         <div className="profileRightBottom">
-                            <Sidebar />
+                            <Sidebar parentComponent={'userProfile'}/>
                             <Feed />
                         </div>
                     </div>

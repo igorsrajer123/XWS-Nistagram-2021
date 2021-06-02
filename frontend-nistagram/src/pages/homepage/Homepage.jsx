@@ -6,7 +6,7 @@ export default class Homepage extends Component {
     render() {
         return (
             <div>
-                <Topbar parentComponent={'homepage'} />
+                <Topbar parentComponent={'homePage'} />
             </div>
         )
     }
