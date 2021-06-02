@@ -31,6 +31,30 @@
     font-size: 24px;
 }
 
+.searchBar{
+    display: flex;
+    margin-top: 5%;
+    width: 85%;
+    align-items: center;
+}
+
+.searchLoggedOut{
+    height: 45px;
+    width: 80%;
+    font-size: 20px;
+}
+
+.searchLoggedOut:focus{
+    outline: none;
+}
+
+.searchIconIndex{
+    transform: scale(2.0);
+    color: #1775ee;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 .loginBox{
     height: 300px;
     padding: 20px;

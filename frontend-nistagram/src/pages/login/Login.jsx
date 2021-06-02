@@ -3,6 +3,7 @@ import "./login.css";
 import background from "./../../assets/wallpaper.webp";
 import LoginService from "./../../services/loginService";
 import RegistrationModal from "./../registration/RegistrationModal";
+import SearchIcon from '@material-ui/icons/Search';
 
 export default class Login extends Component {
     constructor() {
@@ -13,12 +14,14 @@ export default class Login extends Component {
         this.state = {
             email: "",
             password: "",
-            loginErrorVisible: false
+            loginErrorVisible: false,
+            searchInput: ""
         }
 
         this.registrationPageClick = this.registrationPageClick.bind(this);
         this.emailInputChange = this.emailInputChange.bind(this);
         this.passwordInputChange = this.passwordInputChange.bind(this);
+        this.searchInputChange = this.searchInputChange.bind(this);
         this.login = this.login.bind(this);
     }
 
@@ -30,6 +33,8 @@ export default class Login extends Component {
     emailInputChange = (event) => this.setState({email : event.target.value});
 
     passwordInputChange = (event) => this.setState({ password : event.target.value});
+
+    searchInputChange = (event) => this.setState({searchInput: event.target.value});
 
     async login(event) {      
         event.preventDefault();
@@ -69,6 +74,10 @@ export default class Login extends Component {
                         </i>
                     </b>
                     </span>
+                    <div className="searchBar">
+                        <input placeholder="Search for friends, locations, celebrities..." className="searchLoggedOut" onChange={this.searchInputChange}/>
+                        <SearchIcon className="searchIconIndex" onClick={() => window.location.href="/searchPage?search=" + this.state.searchInput} />
+                    </div>
                 </div>
                 <div className="loginCenter">
                     <RegistrationModal ref={this.child} />

@@ -134,3 +134,17 @@ func (userRepo *UserRepository) ChangeUserPassword(email string, newPassword str
 
 	return user.ID
 }
+
+func (userRepo *UserRepository) ToggleProfilePrivacy(id int) {
+
+	user := &model.User{}
+	userRepo.db.Where("id = ?", id).First(&user)
+
+	if user.PrivateProfile {
+		user.PrivateProfile = false
+	} else {
+		user.PrivateProfile = true
+	}
+
+	userRepo.db.Save(&user)
+}

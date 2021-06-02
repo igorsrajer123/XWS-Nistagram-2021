@@ -146,5 +146,19 @@ func (userServer *UserServer) ChangeUserPasswordHandler(w http.ResponseWriter, r
 
 	id := userServer.userRepo.ChangeUserPassword(user.Email, user.Password)
 	RenderJSON(w, dto.ResponseId{Id: id})
+}
 
+func (userServer *UserServer) ToggleProfilePrivacyHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["id"]
+	if !ok {
+		fmt.Println("ID is missing!")
+	}
+
+	stringId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	userServer.userRepo.ToggleProfilePrivacy(stringId)
 }
