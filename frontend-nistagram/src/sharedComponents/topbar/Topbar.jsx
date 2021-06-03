@@ -12,7 +12,8 @@ export default class Topbar extends Component {
             parentUserProfile: false,
             parentSearchPage: false,
             parentHomePage: false,
-            searchInput: ""
+            searchInput: "",
+            publicSearch: false
         }
 
         this.goHome = this.goHome.bind(this);
@@ -35,6 +36,14 @@ export default class Topbar extends Component {
             this.setState({parentUserProfile: false});
             this.setState({parentHomePage: false});
             this.setState({parentSearchPage: true});
+
+            const queryParams = new URLSearchParams(window.location.search);
+            const publ = queryParams.get('public');
+            if(publ == 'true')
+                this.setState({publicSearch: true});
+            else if(publ == 'false')
+                this.setState({publicSearch: false});
+
         }else if(this.props.parentComponent == 'homePage'){
             this.setState({parentUserProfile: false});
             this.setState({parentHomePage: true});
@@ -45,12 +54,12 @@ export default class Topbar extends Component {
     render() {
         return (
             <div className="topbarContainer">
-                <div className="topbarLeft">
+                <div className="topbarLeft" style={{visibility: this.state.publicSearch ? 'hidden' : 'visible'}}>
                     <span onClick={this.goHome} className="logo">Ništagram</span>
                 </div>
                 <div className="topbarCenter">
-                    <div className="searchbar">
-                        <SearchIcon className="searchIcon" onClick={() => window.location.href="/searchPage?public=false&search=" + this.state.searchInput} />
+                    <div className="searchbar" style={{visibility: this.state.publicSearch ? 'hidden' : 'visible'}}>
+                        <SearchIcon className="searchIcon" style={{visibility: this.state.searchInput == "" ? 'hidden' : 'visible'}} onClick={() => window.location.href="/searchPage?public=false&search=" + this.state.searchInput} />
                         <input type="text" className="searchInput" onChange={this.searchInputChange} placeholder="Search for friend, post or page..." />
                     </div>
                 </div>

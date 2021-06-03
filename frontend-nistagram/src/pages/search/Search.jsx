@@ -46,15 +46,22 @@ export default class Search extends Component {
     userNameClick(userId) {
             this.setState({searchedUserId: userId});
             this.child.current.toggleModal();
-            console.log(this.state.searchedUserId)
     }  
 
-    SearchedUsers = () => this.state.searchedUsers.map(user =>
-        <div className="searchUser" key={user.id}>
-            <img src={ProfilePicture}  alt="" className="searchUserImage"/>
-            <span className="searchUserName" onClick={() => this.userNameClick(user.id)}><b>{user.firstName} {user.lastName}</b> ({user.location})</span>
-        </div>
-    );
+    SearchedUsers = () => {
+        if(this.state.searchedUsers == null){
+            return <div>
+                    <b style={{fontSize: '25px', color: 'red'}}>No Results Found for Your Search!</b>
+                    </div>
+        }else{
+            return this.state.searchedUsers.map(user =>
+                <div className="searchUser" key={user.id}>
+                    <img src={ProfilePicture}  alt="" className="searchUserImage"/>
+                    <span className="searchUserName" onClick={() => this.userNameClick(user.id)}><b>{user.firstName} {user.lastName}</b> ({user.location})</span>
+                </div>
+                );
+        }
+    }
 
     render() {
         return (

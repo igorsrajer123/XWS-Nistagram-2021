@@ -14,7 +14,8 @@
 
 .searchBody{
     width: 50%;
-    
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .searchUser{

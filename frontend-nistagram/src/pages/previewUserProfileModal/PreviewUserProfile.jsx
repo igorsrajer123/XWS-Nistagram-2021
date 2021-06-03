@@ -20,7 +20,8 @@ export default class PreviewUserProfile extends Component {
             userGender: "",
             userWebsite: "",
             userDescription: "",
-            userPhone: ""
+            userPhone: "",
+            userId: 0
         }
 
         this.toggleModal = this.toggleModal.bind(this);
@@ -33,21 +34,27 @@ export default class PreviewUserProfile extends Component {
             this.setState({ isOpen : true});
     }
 
-    async componentDidMount() {
-        const myUser = await UserService.getUserById(this.props.userId);
-
-        this.setState({userEmail: myUser.email});
-        this.setState({userFirstName: myUser.firstName});
-        this.setState({userLastName: myUser.lastName});
-        this.setState({userAge: myUser.age});
-        this.setState({userGender: myUser.gender});
-        this.setState({userWebsite: myUser.website});
-        this.setState({userLocation: myUser.location});
-        this.setState({userPhone: myUser.phoneNumber});
-        this.setState({userDescription: myUser.description});
+    async componentDidMount(props) {
+       // const myUser = await UserService.getUserById(this.props.userId);
+        //console.log("Poslat key: " + this.props.userId);
     }
 
-    
+    async componentDidUpdate(prevProps) {
+        if(prevProps.userId != this.props.userId){
+            const myUser = await UserService.getUserById(this.props.userId);
+
+            this.setState({userId: this.props.userId});
+            this.setState({userEmail: myUser.email});
+            this.setState({userFirstName: myUser.firstName});
+            this.setState({userLastName: myUser.lastName});
+            this.setState({userAge: myUser.age});
+            this.setState({userGender: myUser.gender});
+            this.setState({userWebsite: myUser.website});
+            this.setState({userLocation: myUser.location});
+            this.setState({userPhone: myUser.phoneNumber});
+            this.setState({userDescription: myUser.description});
+        }
+    }
 
     render() {
         return (
@@ -61,7 +68,7 @@ export default class PreviewUserProfile extends Component {
                     </div>
                     <div className="previewProfileCenter">
                             <h4 className="previewProfileName">{this.state.userFirstName} {this.state.userLastName}</h4>
-                            <span className="previewProfileDescription">PROFILE SECRIPTION BLA BLA BLA <br/>adasadad</span>
+                            <span className="previewProfileDescription">{this.state.userDescription}</span>
                             <div className="previewFollowings">
                                 <span className="previewFollowing"><b>Following:</b> 69</span>
                                 <span className="previewFollowers"><b>Followers:</b> 69</span>
@@ -70,10 +77,10 @@ export default class PreviewUserProfile extends Component {
                     </div>
                     <div className="previewProfileBottom">
                         <div className="previewSidebar">
-                            <Sidebar parentComponent={'previewProfile'} />
+                            <Sidebar parentComponent={'previewProfile'} userId={this.state.userId} />
                         </div>
                         <div className="previewFeed">
-                            feed
+                            
                         </div>                   
                     </div>
                 </div>

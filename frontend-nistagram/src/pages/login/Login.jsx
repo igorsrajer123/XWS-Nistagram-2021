@@ -76,7 +76,7 @@ export default class Login extends Component {
                     </span>
                     <div className="searchBar">
                         <input placeholder="Search for friends, locations, celebrities..." className="searchLoggedOut" onChange={this.searchInputChange}/>
-                        <SearchIcon className="searchIconIndex" onClick={() => window.location.href="/searchPage?public=true&search=" + this.state.searchInput} />
+                        <SearchIcon className="searchIconIndex" style={{visibility: this.state.searchInput == "" ? 'hidden' : 'visible'}} onClick={() => window.location.href="/searchPage?public=true&search=" + this.state.searchInput} />
                     </div>
                 </div>
                 <div className="loginCenter">

@@ -3,6 +3,7 @@ import './sidebar.css';
 import LoginService from './../../services/loginService';
 import UserInformationModal from './../../pages/userInformationModals/ChangeUserInformation';
 import UserPasswordModal from './../../pages/userInformationModals/ChangeUserPassword';
+import UserService from './../../services/userService';
 
 export default class Sidebar extends Component {
     constructor(props) {
@@ -12,6 +13,7 @@ export default class Sidebar extends Component {
         this.passwordRef = React.createRef();
 
         this.state = {
+            userId: 0,
             firstName: "",
             lastName: "",
             email: "",
@@ -32,35 +34,65 @@ export default class Sidebar extends Component {
 
     async componentDidMount(){
         if(this.props.parentComponent == 'userProfile'){
+            this.setState({parentPreviewProfile: false});
+            this.setState({parentUserProfile: true});
+
             const currentUser = await LoginService.getCurrentUser();
-        
-            this.setState({email: currentUser.email});
-            this.setState({firstName: currentUser.firstName});
-            this.setState({lastName: currentUser.lastName});
-            this.setState({phoneNumber: currentUser.phoneNumber});
-            this.setState({age: currentUser.age});
-            this.setState({gender: currentUser.gender});
-            this.setState({location: currentUser.location});
-            this.setState({website: currentUser.website});
-
-            if(currentUser.phoneNumber != "")
-                this.setState({showPhone: true});
-            
-            if(currentUser.age != "")
-                this.setState({showAge: true});
-            
-            if(currentUser.location != "")
-                this.setState({showLocation: true});
-
-            if(currentUser.website != "")
-                this.setState({showWebsite: true});
-
-            if(currentUser.gender != "" && currentUser.gender != "None")
-                this.setState({showGender: true});
+            this.setUserInformationStates(currentUser);
 
         }else if(this.props.parentComponent == 'previewProfile'){
-            console.log("PREVIEW JE RODITELJ!");
+            this.setState({parentUserProfile: false});
+            this.setState({parentPreviewProfile: true});
+
+            if(this.props.userId != 0){
+                const myUser = await UserService.getUserById(this.props.userId);
+                this.setUserInformationStates(myUser);
+            }
         }
+    }
+
+    async componentDidUpdate(prevProps) {
+        if(prevProps.userId != this.props.userId){
+            const myUser = await UserService.getUserById(this.props.userId);
+            this.setUserInformationStates(myUser);
+        }
+    }
+
+    setUserInformationStates = myUser => {
+        this.setState({userId: myUser.id});
+        this.setState({email: myUser.email});
+        this.setState({firstName: myUser.firstName});
+        this.setState({lastName: myUser.lastName});
+        this.setState({phoneNumber: myUser.phoneNumber});
+        this.setState({age: myUser.age});
+        this.setState({gender: myUser.gender});
+        this.setState({location: myUser.location});
+        this.setState({website: myUser.website});
+
+        if(myUser.phoneNumber != "")
+            this.setState({showPhone: true});
+        else 
+            this.setState({showPhone: false});
+
+        if(myUser.age != 0 && myUser.age != "")
+            this.setState({showAge: true});
+        else
+            this.setState({showAge: false});
+
+        if(myUser.location != "")
+            this.setState({showLocation: true});
+        else
+            this.setState({showLocation: false});
+
+        if(myUser.website != "")
+            this.setState({showWebsite: true});
+        else
+            this.setState({showWebsite: false});
+
+        if(myUser.gender != "" && myUser.gender != "None")
+            this.setState({showGender: true});
+        else
+            this.setState({showGender: false});
     }
 
     userInformationModal = () => this.infoRef.current.toggleUserModal();
@@ -80,8 +112,8 @@ export default class Sidebar extends Component {
                         <p className="userInfo" style={{display: this.state.showLocation ? 'block' : 'none'}}><b>Location:</b> {this.state.location}</p>
                         <p className="userInfo" style={{display: this.state.showWebsite ? 'block' : 'none'}}><b>Website:</b> <a>{this.state.website}</a></p>
                         <div className="userButtons">
-                            <button onClick={this.userInformationModal} className="changeUserInfo">Update your information</button>
-                            <button onClick={this.userPasswordModal} className="changeUserPassword">Change your password</button>
+                            <button onClick={this.userInformationModal} style={{display: this.state.parentUserProfile ? 'block' : 'none'}} className="changeUserInfo">Update your information</button>
+                            <button onClick={this.userPasswordModal} style={{display: this.state.parentUserProfile ? 'block' : 'none'}} className="changeUserPassword">Change your password</button>
                         </div>
                     </div>
                     <div>

@@ -65,8 +65,8 @@
 }
 
 .previewFollowings{
-    border-style: groove;
-    border-color: dodgerblue;
+    border-style: ridge;
+    border-color: lightsteelblue;
     display: flex;
     width: 50%;
     justify-content: center;
@@ -116,7 +116,6 @@
 }
 
 .previewSidebar{
-    background-color: red;
     flex: 2;
     height: 100%;
     margin-top: 10px;
