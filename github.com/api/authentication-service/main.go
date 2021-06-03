@@ -32,6 +32,7 @@ func main() {
 
 	router.HandleFunc("/login", server.LoginHandler).Methods("POST")
 	router.HandleFunc("/getCurrentUser", server.GetUserHandler).Methods("GET")
+	router.HandleFunc("/logout", server.LogoutHandler).Methods("POST")
 
 	corsHandler := handlers.CORS(headers, methods, origins)
 

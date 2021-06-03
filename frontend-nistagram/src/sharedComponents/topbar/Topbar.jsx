@@ -3,6 +3,7 @@ import './topbar.css';
 import SearchIcon from '@material-ui/icons/Search';
 import PersonIcon from '@material-ui/icons/Person';
 import ProfilePicture from './../../assets/noPicture.jpg';
+import LoginService from '../../services/loginService';
 
 export default class Topbar extends Component {
     constructor(props) {
@@ -26,6 +27,10 @@ export default class Topbar extends Component {
     goToMyProfile = () => window.location.href = "http://localhost:3000/userProfile";
 
     searchInputChange = (event) => this.setState({searchInput: event.target.value});
+
+    async logoutClick(){
+        await LoginService.logout();
+    }
 
     componentDidMount() {
         if(this.props.parentComponent == 'userProfile'){
@@ -69,6 +74,7 @@ export default class Topbar extends Component {
                                 <PersonIcon />
                                 <span className="topbarIconBadge">10</span>
                         </div>
+                        <button className="topbarLogout" style={{visibility: this.state.publicSearch ? 'hidden' : 'visible'}} onClick={this.logoutClick}>Log Out</button>
                         <img src={ProfilePicture} onClick={this.goToMyProfile} style={{visibility: this.state.parentUserProfile || this.state.parentSearchPage ? 'hidden' : 'visible'}} alt="" className="topbarImg"/>
                     </div>
                 </div>

@@ -25,9 +25,13 @@ export default class UserProfile extends Component {
     async componentDidMount(){
         const currentUser = await LoginService.getCurrentUser();
         
-        this.setState({firstName: currentUser.firstName});
-        this.setState({lastName: currentUser.lastName});
-        this.setState({description: currentUser.description});
+        if(currentUser == null){
+            window.location.href = "/";
+        }else{
+            this.setState({firstName: currentUser.firstName});
+            this.setState({lastName: currentUser.lastName});
+            this.setState({description: currentUser.description});
+        }
     }
 
     render() {

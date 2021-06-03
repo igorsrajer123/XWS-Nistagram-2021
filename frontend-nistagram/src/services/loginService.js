@@ -19,16 +19,30 @@ async function getCurrentUser() {
     const data = await response.text();
     
     if(response.status == 401)
-        window.location.href = "/";
+        return null;
 
     const newUrl = "http://localhost:8000/api/user/getUserByEmail/" + data;
     const newResponse = await fetch(newUrl);
     const newData = await newResponse.json();
-
+    console.log(newData);
     return newData;
+}
+
+async function logout() {
+    const url = "http://localhost:8000/api/auth/logout";  
+    const response = await fetch(url, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json',
+                    'Access-Control-Request-Origin':'*',
+                    'Access-Control-Request-Methods': '*',
+                    'Access-Control-Request-Headers': '*'},
+    }).catch(e => console.error(e));
+
+    window.location.href = "/";
 }
 
 export default {
     login,
-    getCurrentUser
+    getCurrentUser,
+    logout
 }

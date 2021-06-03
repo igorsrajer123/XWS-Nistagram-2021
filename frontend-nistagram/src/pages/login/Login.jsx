@@ -25,6 +25,14 @@ export default class Login extends Component {
         this.login = this.login.bind(this);
     }
 
+    async componentDidMount() {
+        const currentUser = await LoginService.getCurrentUser();
+
+        if(currentUser != null){
+            window.location.href="/home";
+        }
+    }
+
     registrationPageClick = (e) => {
         e.preventDefault();
         this.child.current.toggleModal();
