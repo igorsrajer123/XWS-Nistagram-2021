@@ -29,10 +29,11 @@ export default class PreviewUserProfile extends Component {
             publicSearch: true,
             followingSelectedUser: false,
             followButtonText: "Follow",
-            loadedCurrentUser: false
+            followRequestSent: false
         }
 
         this.toggleModal = this.toggleModal.bind(this);
+        this.followUserClick = this.followUserClick.bind(this);
     }
 
     toggleModal = () => {
@@ -42,10 +43,34 @@ export default class PreviewUserProfile extends Component {
             this.setState({ isOpen : true});
     }
 
+    async followUserClick() {
+        const myUser = await UserService.getUserById(this.props.userId);
+        const currentUser = await LoginService.getCurrentUser();
+
+        if(this.state.followingSelectedUser){
+            console.log("Vec pratis");
+        }
+
+        if(!this.state.followingSelectedUser){
+            const response = await FollowService.followUser(currentUser.id, myUser.id);
+
+            if(response.status == 200){
+                this.setState({followingSelectedUser: true});
+                this.setState({followButtonText: "Unfollow"});
+            }
+
+            if(response.status == 201){
+                this.setState({followRequestSent: true});
+                this.setState({followButtonText: "Request Sent"});
+            }
+        }
+    }
+
     async componentDidUpdate(prevProps) {
         if(prevProps.userId != this.props.userId){
             const myUser = await UserService.getUserById(this.props.userId);
 
+            this.setState({followRequestSent: false});
             this.setState({userId: this.props.userId});
             this.setState({userEmail: myUser.email});
             this.setState({userFirstName: myUser.firstName});
@@ -99,10 +124,19 @@ export default class PreviewUserProfile extends Component {
                 this.setState({followButtonText: "Follow"});
                 this.setState({followingSelectedUser: false});
             }
+
+            const followRequests = await FollowService.getFollowRequests(this.props.userId);
+            if(followRequests != null){
+                for(var i = 0; i < followRequests.length; ++i){
+                    if(followRequests[i].sentById == currentUser.id &&
+                        followRequests[i].sentToId == this.props.userId){
+                            this.setState({followRequestSent: true});
+                            this.setState({followButtonText: "Request Sent"});
+                    }
+                }
+            }
         }
     }
-
-
 
     render() {
         return (
@@ -121,7 +155,9 @@ export default class PreviewUserProfile extends Component {
                                 <span className="previewFollowing"><b>Following:</b> {this.state.numberOfFollowings}</span>
                                 <span className="previewFollowers"><b>Followers:</b> {this.state.numberOfFollowers}</span>
                                 <button className="previewFollow" style={{display: this.state.publicSearch ? 'none' : 'block',
-                                                                backgroundColor: this.state.followingSelectedUser ? 'red' : 'lime'}}>{this.state.followButtonText}</button>
+                                                                backgroundColor: this.state.followingSelectedUser ? 'red' : 'lime',
+                                                                pointerEvents: this.state.followRequestSent ? 'none' : 'auto',
+                                                                cursor: this.state.followRequestSent ? 'not-allowed' : 'pointer'}} onClick={this.followUserClick}>{this.state.followButtonText}</button>
                             </div>
                     </div>
                     <div className="previewProfileBottom">

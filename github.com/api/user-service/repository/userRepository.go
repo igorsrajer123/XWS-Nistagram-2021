@@ -189,7 +189,7 @@ func (userRepo *UserRepository) SearchAllProfiles(searchParameter string) []mode
 	return myUsers
 }
 
-func (userRepo *UserRepository) Follow(currentUserId string, followUserId string) {
+func (userRepo *UserRepository) Follow(currentUserId string, followUserId string) int {
 	currentUser := &model.User{}
 	userRepo.db.Preload(clause.Associations).Where("id = ?", currentUserId).First(&currentUser)
 
@@ -208,12 +208,16 @@ func (userRepo *UserRepository) Follow(currentUserId string, followUserId string
 			Status:   "PENDING"}
 
 		userRepo.db.Create(&followRequest)
+
+		return 1
 	} else {
 		currentUser.Followings = append(currentUser.Followings, followUser)
 		userRepo.db.Omit("Followings.*").Save(&currentUser)
 
 		followUser.Followers = append(followUser.Followers, currentUser)
 		userRepo.db.Omit("Followers.*").Save(&followUser)
+
+		return 2
 	}
 }
 

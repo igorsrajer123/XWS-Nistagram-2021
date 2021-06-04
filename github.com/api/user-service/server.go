@@ -212,7 +212,15 @@ func (userServer *UserServer) FollowHandler(w http.ResponseWriter, req *http.Req
 	currentUserId := vars["currentId"]
 	followUserId := vars["followingId"]
 
-	userServer.userRepo.Follow(currentUserId, followUserId)
+	result := userServer.userRepo.Follow(currentUserId, followUserId)
+
+	if result == 1 {
+		w.WriteHeader(http.StatusCreated)
+	}
+
+	if result == 2 {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func (userServer *UserServer) UnfollowHandler(w http.ResponseWriter, req *http.Request) {
