@@ -4,7 +4,6 @@ import SearchService from './../../services/searchService';
 import ProfilePicture from './../../assets/noPicture.jpg';
 import Topbar from './../../sharedComponents/topbar/Topbar';
 import PreviewUserProfile from './../../pages/previewUserProfileModal/PreviewUserProfile';
-import { ThreeSixtySharp } from '@material-ui/icons';
 
 export default class Search extends Component {
     constructor() {

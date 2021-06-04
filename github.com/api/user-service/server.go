@@ -206,3 +206,67 @@ func (userServer *UserServer) SearchAllProfilesHandler(w http.ResponseWriter, re
 		return
 	}
 }
+
+func (userServer *UserServer) FollowHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	currentUserId := vars["currentId"]
+	followUserId := vars["followingId"]
+
+	userServer.userRepo.Follow(currentUserId, followUserId)
+}
+
+func (userServer *UserServer) UnfollowHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	currentUserId := vars["currentId"]
+	followUserId := vars["followingId"]
+
+	userServer.userRepo.Unfollow(currentUserId, followUserId)
+}
+
+func (userServer *UserServer) GetUserFollowingsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	params, ok := vars["currentId"]
+	if !ok {
+		fmt.Println("Search params are missing!")
+	}
+
+	result := userServer.userRepo.GetUserFollowings(params)
+	if result != nil {
+		RenderJSON(w, result)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+}
+
+func (userServer *UserServer) GetUserFollowersHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	params, ok := vars["currentId"]
+	if !ok {
+		fmt.Println("Search params are missing!")
+	}
+
+	result := userServer.userRepo.GetUserFollowers(params)
+	if result != nil {
+		RenderJSON(w, result)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+}
+
+func (userServer *UserServer) GetUserFollowRequestsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	params, ok := vars["currentId"]
+	if !ok {
+		fmt.Println("Search params are missing!")
+	}
+
+	result := userServer.userRepo.GetUserActiveFollowRequests(params)
+	if result != nil {
+		RenderJSON(w, result)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+}

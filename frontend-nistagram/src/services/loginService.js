@@ -24,7 +24,6 @@ async function getCurrentUser() {
     const newUrl = "http://localhost:8000/api/user/getUserByEmail/" + data;
     const newResponse = await fetch(newUrl);
     const newData = await newResponse.json();
-    console.log(newData);
     return newData;
 }
 

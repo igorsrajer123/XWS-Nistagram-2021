@@ -3,11 +3,13 @@ package repository
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/api/user-service/model"
 )
@@ -32,6 +34,7 @@ func New() (*UserRepository, error) {
 	}
 	userRepo.db = db
 	userRepo.db.AutoMigrate(&model.User{})
+	userRepo.db.AutoMigrate(&model.FollowRequest{})
 
 	return userRepo, nil
 }
@@ -89,7 +92,9 @@ func (userRepo *UserRepository) CreateUser(email string, password string, firstN
 		PhoneNumber: phoneNumber,
 		Gender:      gender,
 		Location:    location,
-		Website:     website}
+		Website:     website,
+		Followings:  nil,
+		Followers:   nil}
 
 	if err != nil {
 		fmt.Println(err)
@@ -182,4 +187,82 @@ func (userRepo *UserRepository) SearchAllProfiles(searchParameter string) []mode
 		}
 	}
 	return myUsers
+}
+
+func (userRepo *UserRepository) Follow(currentUserId string, followUserId string) {
+	currentUser := &model.User{}
+	userRepo.db.Preload(clause.Associations).Where("id = ?", currentUserId).First(&currentUser)
+
+	followUser := &model.User{}
+	userRepo.db.Preload(clause.Associations).Where("id = ?", followUserId).First(&followUser)
+
+	if *followUser.PrivateProfile {
+		fmt.Println("This profile is private......!")
+
+		followUserIdInt, _ := strconv.Atoi(followUserId)
+		followerUserIdInt2, _ := strconv.Atoi(currentUserId)
+
+		followRequest := model.FollowRequest{
+			SentById: followerUserIdInt2,
+			SentToId: followUserIdInt,
+			Status:   "PENDING"}
+
+		userRepo.db.Create(&followRequest)
+	} else {
+		currentUser.Followings = append(currentUser.Followings, followUser)
+		userRepo.db.Omit("Followings.*").Save(&currentUser)
+
+		followUser.Followers = append(followUser.Followers, currentUser)
+		userRepo.db.Omit("Followers.*").Save(&followUser)
+	}
+}
+
+func (userRepo *UserRepository) Unfollow(currentUserId string, followUserId string) {
+	currentUser := &model.User{}
+	userRepo.db.Preload("Followings").Preload("Followers").Where("id = ?", currentUserId).First(&currentUser)
+
+	followUser := &model.User{}
+	userRepo.db.Preload("Followers").Preload("Followings").Where("id = ?", followUserId).First(&followUser)
+
+	followUserIdInt, _ := strconv.Atoi(followUserId)
+	for i, oneUser := range currentUser.Followings {
+		if oneUser.ID == followUserIdInt {
+			currentUser.Followings = append(currentUser.Followings[:i], currentUser.Followings[i+1:]...)
+			userRepo.db.Save(&currentUser)
+		}
+	}
+
+	followerUserIdInt2, _ := strconv.Atoi(currentUserId)
+	for i, oneUser := range followUser.Followers {
+		if oneUser.ID == followerUserIdInt2 {
+			followUser.Followers = append(followUser.Followers[:i], followUser.Followers[i+1:]...)
+			userRepo.db.Save(&oneUser)
+		}
+	}
+}
+
+//followings - users that our user follows
+func (userRepo *UserRepository) GetUserFollowings(currentUserId string) []*model.User {
+	var currentUser model.User
+	userRepo.db.Preload("Followings").Where("id = ?", currentUserId).First(&currentUser)
+
+	return currentUser.Followings
+}
+
+//followers - users that follow our user
+func (userRepo *UserRepository) GetUserFollowers(currentUserId string) []*model.User {
+	var currentUser model.User
+	userRepo.db.Preload("Followers").Where("id = ?", currentUserId).First(&currentUser)
+
+	return currentUser.Followers
+}
+
+func (userRepo *UserRepository) GetUserActiveFollowRequests(userId string) []model.FollowRequest {
+	var user model.User
+	userRepo.db.Where("id = ?", userId).First(&user)
+
+	var requests []model.FollowRequest
+	userRepo.db.Where("sent_to_id = ? AND status = ?", user.ID, "PENDING").Find(&requests)
+
+	return requests
 }

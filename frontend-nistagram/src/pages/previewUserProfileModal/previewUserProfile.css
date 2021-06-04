@@ -98,16 +98,15 @@
     height: 40px;
     width: 120px;
     text-align: center;
-    background-color: limegreen;
     cursor: pointer;
     transition: 0.7s;
 }
 
 .previewFollow:hover{
     background-color: white;
-    color: limegreen;
+    color: lightgray;
     border-style: solid;
-    border-color: lime;
+    border-color: black;
 }
 
 .previewProfileBottom{

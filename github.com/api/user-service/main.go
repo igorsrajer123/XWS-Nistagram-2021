@@ -35,6 +35,11 @@ func main() {
 	router.HandleFunc("/toggleProfilePrivacy/{id}", server.ToggleProfilePrivacyHandler).Methods("PUT")
 	router.HandleFunc("/searchPublicProfiles/{searchParams}", server.SearchPublicProfilesHandler).Methods("GET")
 	router.HandleFunc("/searchAllProfiles/{searchParams}", server.SearchAllProfilesHandler).Methods("GET")
+	router.HandleFunc("/follow/{currentId}/{followingId}", server.FollowHandler).Methods("PUT")
+	router.HandleFunc("/unfollow/{currentId}/{followingId}", server.UnfollowHandler).Methods("DELETE")
+	router.HandleFunc("/getUserFollowings/{currentId}", server.GetUserFollowingsHandler).Methods("GET")
+	router.HandleFunc("/getUserFollowers/{currentId}", server.GetUserFollowersHandler).Methods("GET")
+	router.HandleFunc("/getUserFollowRequests/{currentId}", server.GetUserFollowRequestsHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

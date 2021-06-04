@@ -5,6 +5,8 @@ import ProfilePicture from './../../assets/noPicture.jpg';
 import CoverPicture from './../../assets/2.jpg';
 import Sidebar from './../../sharedComponents/sidebar/Sidebar';  
 import UserService from '../../services/userService';
+import FollowService from '../../services/followService';
+import LoginService from '../../services/loginService';
 
 export default class PreviewUserProfile extends Component {
     constructor(props){
@@ -21,7 +23,13 @@ export default class PreviewUserProfile extends Component {
             userWebsite: "",
             userDescription: "",
             userPhone: "",
-            userId: 0
+            userId: 0,
+            numberOfFollowings: 0,
+            numberOfFollowers: 0,
+            publicSearch: true,
+            followingSelectedUser: false,
+            followButtonText: "Follow",
+            loadedCurrentUser: false
         }
 
         this.toggleModal = this.toggleModal.bind(this);
@@ -32,11 +40,6 @@ export default class PreviewUserProfile extends Component {
             this.setState({ isOpen : false});
         else 
             this.setState({ isOpen : true});
-    }
-
-    async componentDidMount(props) {
-       // const myUser = await UserService.getUserById(this.props.userId);
-        //console.log("Poslat key: " + this.props.userId);
     }
 
     async componentDidUpdate(prevProps) {
@@ -53,8 +56,53 @@ export default class PreviewUserProfile extends Component {
             this.setState({userLocation: myUser.location});
             this.setState({userPhone: myUser.phoneNumber});
             this.setState({userDescription: myUser.description});
+
+            const followings = await FollowService.getUserFollowings(this.props.userId)
+            this.setState({numberOfFollowings: followings.length});
+
+            const followers = await FollowService.getUserFollowers(this.props.userId)
+            this.setState({numberOfFollowers: followers.length});
+
+            const queryParams = new URLSearchParams(window.location.search);
+            const publ = queryParams.get('public');
+
+            if(publ == 'true')
+                this.setState({publicSearch: true});
+            else
+                this.setState({publicSearch: false});
+
+            const currentUser = await LoginService.getCurrentUser();
+
+            if(currentUser == null && publ == 'false')
+                window.location.href = "/";
+            
+            var followingUser = false;
+            if(currentUser != null){
+                const currentUserFollowings = await FollowService.getUserFollowings(currentUser.id);
+                for (var i = 0; i < currentUserFollowings.length; ++i) {
+                    if(this.props.userId == currentUser.id){
+                        this.setState({publicSearch: true});
+                        break;
+                    }
+
+                    if(currentUserFollowings[i].id == this.props.userId && this.props.userId != currentUser.id) {
+                        followingUser = true;
+                        break;
+                    }
+                }
+            }
+
+            if(followingUser){
+                this.setState({followButtonText: "Unfollow"});
+                this.setState({followingSelectedUser: true});
+            }else{
+                this.setState({followButtonText: "Follow"});
+                this.setState({followingSelectedUser: false});
+            }
         }
     }
+
+
 
     render() {
         return (
@@ -70,9 +118,10 @@ export default class PreviewUserProfile extends Component {
                             <h4 className="previewProfileName">{this.state.userFirstName} {this.state.userLastName}</h4>
                             <span className="previewProfileDescription">{this.state.userDescription}</span>
                             <div className="previewFollowings">
-                                <span className="previewFollowing"><b>Following:</b> 69</span>
-                                <span className="previewFollowers"><b>Followers:</b> 69</span>
-                                <button className="previewFollow">Follow</button>
+                                <span className="previewFollowing"><b>Following:</b> {this.state.numberOfFollowings}</span>
+                                <span className="previewFollowers"><b>Followers:</b> {this.state.numberOfFollowers}</span>
+                                <button className="previewFollow" style={{display: this.state.publicSearch ? 'none' : 'block',
+                                                                backgroundColor: this.state.followingSelectedUser ? 'red' : 'lime'}}>{this.state.followButtonText}</button>
                             </div>
                     </div>
                     <div className="previewProfileBottom">
