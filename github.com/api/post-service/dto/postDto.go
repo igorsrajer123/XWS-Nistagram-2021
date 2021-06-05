@@ -1,11 +1,19 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"github.com/lib/pq"
+)
 
 type PostDto struct {
-	Description string    `json:"description"`
-	Published   time.Time `json:"published"`
-	Expires     time.Time `json:"expires"`
+	ID          int
+	Description string
+	Tags        pq.StringArray
+	Published   time.Time
+	Location    string
+	UserRefer   int
+	Type        string
 }
 
 type ResponseId struct {

@@ -1,13 +1,17 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/lib/pq"
+)
 
 type Post struct {
-	ID          int       `json:"postId"`
-	Description string    `json:"description"`
-	Tags        []string  `json:"tags"`
-	Published   time.Time `json:"published"`
-	Location    string    `json:"location"`
-	UserRefer   int       `json:"createdBy"`
-	Type        string    `json:"type"`
+	ID          int            `json:"id" gorm:"primaryKey"`
+	Description string         `json:"description"`
+	Tags        pq.StringArray `json:"tags" gorm:"type:text[][]"`
+	Published   time.Time      `json:"published"`
+	Location    string         `json:"location"`
+	UserRefer   int            `json:"createdBy"`
+	Type        string         `json:"type"`
 }

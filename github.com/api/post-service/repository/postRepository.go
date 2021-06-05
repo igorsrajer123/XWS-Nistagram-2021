@@ -3,10 +3,13 @@ package repository
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/api/post-service/model"
+	"github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	//	userModel "github.com/api/user-service/model"
 )
 
 type PostRepository struct {
@@ -45,7 +48,37 @@ func (userRepo *PostRepository) Close() error {
 
 func (postRepo *PostRepository) GetAllPosts() []model.Post {
 	var posts []model.Post
-	postRepo.db.Preload("Tags").Find(&posts)
+	postRepo.db.Find(&posts)
 
 	return posts
+}
+
+func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.StringArray, location string,
+	userRefer int) int {
+
+	post := model.Post{
+		Description: description,
+		Location:    location,
+		UserRefer:   userRefer,
+		Published:   time.Now(),
+		Type:        "STATUS",
+		Tags:        tags}
+
+	postRepo.db.Create(&post)
+	return post.ID
+}
+
+func (postRepo *PostRepository) GetUserStatusPosts(userId int) []model.Post {
+	var statusPosts []model.Post
+	postRepo.db.Where("user_refer = ?", userId).Find(&statusPosts)
+
+	return statusPosts
+}
+
+func (postRepo *PostRepository) GetFeedStatusPosts(userId int) {
+	var currentUserStatusPosts []model.Post
+	postRepo.db.Where("user_refer = ?", userId).Find(&currentUserStatusPosts)
+
+	//var followingsStatusPosts []model.Post
+	//users := &userModel.User{}
 }

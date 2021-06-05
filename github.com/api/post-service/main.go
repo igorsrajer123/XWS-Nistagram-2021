@@ -26,7 +26,9 @@ func main() {
 
 	defer server.CloseDB()
 
-	router.HandleFunc("/", server.GetAllPostsHandler).Methods("GET")
+	router.HandleFunc("/getAllPosts", server.GetAllPostsHandler).Methods("GET")
+	router.HandleFunc("/createStatusPost", server.CreateStatusPostHandler).Methods("POST")
+	router.HandleFunc("/getUserPosts/{userId}", server.GetUserStatusPostsHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
