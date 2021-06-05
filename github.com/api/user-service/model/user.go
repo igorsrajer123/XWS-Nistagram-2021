@@ -1,20 +1,23 @@
 package model
 
+import "github.com/api/post-service/model"
+
 type User struct {
-	ID             int     `json:"id" gorm:"primaryKey"`
-	Email          string  `json:"email" gorm:"unique;not null"`
-	Password       string  `json:"password" gorm:"not null"`
-	FirstName      string  `json:"firstName"`
-	LastName       string  `json:"lastName"`
-	Age            int     `json:"age"`
-	PhoneNumber    string  `json:"phoneNumber"`
-	Gender         string  `json:"gender"`
-	Location       string  `json:"location"`
-	PrivateProfile *bool   `json:"privateProfile" gorm:"default:false"`
-	Description    string  `json:"description"`
-	Website        string  `json:"website"`
-	Followings     []*User `gorm:"foreignkey:ID;many2many:followings;" json:"followings"`
-	Followers      []*User `gorm:"foreignkey:ID;many2many:followers;" json:"followers"`
+	ID             int          `json:"id" gorm:"primaryKey"`
+	Email          string       `json:"email" gorm:"unique;not null"`
+	Password       string       `json:"password" gorm:"not null"`
+	FirstName      string       `json:"firstName"`
+	LastName       string       `json:"lastName"`
+	Age            int          `json:"age"`
+	PhoneNumber    string       `json:"phoneNumber"`
+	Gender         string       `json:"gender"`
+	Location       string       `json:"location"`
+	PrivateProfile *bool        `json:"privateProfile" gorm:"default:false"`
+	Description    string       `json:"description"`
+	Website        string       `json:"website"`
+	Followings     []*User      `gorm:"foreignkey:ID;many2many:followings;" json:"followings"`
+	Followers      []*User      `gorm:"foreignkey:ID;many2many:followers;" json:"followers"`
+	Posts          []model.Post `gorm:"foreignKey:UserRefer" json:"posts"`
 }
 
 type FollowRequest struct {
