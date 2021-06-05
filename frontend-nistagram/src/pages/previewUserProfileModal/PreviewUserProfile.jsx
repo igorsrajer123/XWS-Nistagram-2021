@@ -24,12 +24,14 @@ export default class PreviewUserProfile extends Component {
             userDescription: "",
             userPhone: "",
             userId: 0,
+            privateProfile: false,
             numberOfFollowings: 0,
             numberOfFollowers: 0,
             publicSearch: true,
             followingSelectedUser: false,
             followButtonText: "Follow",
-            followRequestSent: false
+            followRequestSent: false,
+            showFeedAndSidebar: true
         }
 
         this.toggleModal = this.toggleModal.bind(this);
@@ -47,22 +49,23 @@ export default class PreviewUserProfile extends Component {
         const myUser = await UserService.getUserById(this.props.userId);
         const currentUser = await LoginService.getCurrentUser();
 
-        if(this.state.followingSelectedUser){
-            console.log("Vec pratis");
-        }
-
         if(!this.state.followingSelectedUser){
             const response = await FollowService.followUser(currentUser.id, myUser.id);
 
             if(response.status == 200){
                 this.setState({followingSelectedUser: true});
                 this.setState({followButtonText: "Unfollow"});
+                this.setState({numberOfFollowers: this.state.numberOfFollowers + 1});
             }
 
             if(response.status == 201){
                 this.setState({followRequestSent: true});
                 this.setState({followButtonText: "Request Sent"});
             }
+        }else {
+            this.setState({followingSelectedUser: false});
+            this.setState({followButtonText: "Follow"});
+            this.setState({numberOfFollowers: this.state.numberOfFollowers - 1});
         }
     }
 
@@ -81,13 +84,25 @@ export default class PreviewUserProfile extends Component {
             this.setState({userLocation: myUser.location});
             this.setState({userPhone: myUser.phoneNumber});
             this.setState({userDescription: myUser.description});
+            this.setState({privateProfile: myUser.privateProfile});
+            this.setState({showFeedAndSidebar: true});
 
             const followings = await FollowService.getUserFollowings(this.props.userId)
-            this.setState({numberOfFollowings: followings.length});
+            if(followings == null){
+                this.setState({numberOfFollowings: 0});
+            }else{
+                this.setState({numberOfFollowings: followings.length});
+            }
 
             const followers = await FollowService.getUserFollowers(this.props.userId)
-            this.setState({numberOfFollowers: followers.length});
+            if(followers == null){
+                this.setState({numberOfFollowers: 0});
+            }else {
+                this.setState({numberOfFollowers: followers.length});
 
+            }
+
+            console.log(this.state.privateProfile)
             const queryParams = new URLSearchParams(window.location.search);
             const publ = queryParams.get('public');
 
@@ -97,10 +112,10 @@ export default class PreviewUserProfile extends Component {
                 this.setState({publicSearch: false});
 
             const currentUser = await LoginService.getCurrentUser();
-
             if(currentUser == null && publ == 'false')
                 window.location.href = "/";
-            
+
+            //check if I'm following this user
             var followingUser = false;
             if(currentUser != null){
                 const currentUserFollowings = await FollowService.getUserFollowings(currentUser.id);
@@ -125,6 +140,7 @@ export default class PreviewUserProfile extends Component {
                 this.setState({followingSelectedUser: false});
             }
 
+            //follow requests setting up
             const followRequests = await FollowService.getFollowRequests(this.props.userId);
             if(followRequests != null){
                 for(var i = 0; i < followRequests.length; ++i){
@@ -134,6 +150,10 @@ export default class PreviewUserProfile extends Component {
                             this.setState({followButtonText: "Request Sent"});
                     }
                 }
+            }
+
+            if(this.state.privateProfile && !this.state.followingSelectedUser){
+                this.setState({showFeedAndSidebar: false});
             }
         }
     }
@@ -161,11 +181,14 @@ export default class PreviewUserProfile extends Component {
                             </div>
                     </div>
                     <div className="previewProfileBottom">
-                        <div className="previewSidebar">
+                        <div className="previewSidebar" style={{display: this.state.showFeedAndSidebar ? 'block' : 'none'}}>
                             <Sidebar parentComponent={'previewProfile'} userId={this.state.userId} />
                         </div>
                         <div className="previewFeed">
-                            
+                            <div className="privateProfile" style={{display: this.state.showFeedAndSidebar ? 'none' : 'block'}}>This Profile is Private!</div>
+                            <div className="previewPosts" style={{display: this.state.showFeedAndSidebar ? 'block' : 'none'}}>
+                                
+                            </div>
                         </div>                   
                     </div>
                 </div>

@@ -66,7 +66,6 @@
 }
 
 .topbarIconItem{ 
-    cursor: pointer;
     position: relative;
     transform: scale(1.5); 
     margin-right: 50px;

@@ -40,6 +40,8 @@ func main() {
 	router.HandleFunc("/getUserFollowings/{currentId}", server.GetUserFollowingsHandler).Methods("GET")
 	router.HandleFunc("/getUserFollowers/{currentId}", server.GetUserFollowersHandler).Methods("GET")
 	router.HandleFunc("/getUserFollowRequests/{currentId}", server.GetUserFollowRequestsHandler).Methods("GET")
+	router.HandleFunc("/acceptRequest/{currentId}/{senderId}", server.AcceptFollowRequestHandler).Methods("PUT")
+	router.HandleFunc("/declineRequest/{currentId}/{senderId}", server.DeclineFollowRequestHandler).Methods("PUT")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

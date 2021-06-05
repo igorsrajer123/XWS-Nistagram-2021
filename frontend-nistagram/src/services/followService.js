@@ -40,9 +40,25 @@ async function getFollowRequests(followUserId) {
     return data;
 }
 
+async function acceptRequest(currentUserId, senderId) {
+    const url = "http://localhost:8000/api/user/acceptRequest/" + currentUserId + "/" + senderId;
+    const response = await fetch(url, {
+        method: "PUT"
+    });
+}
+
+async function declineRequest(currentUserId, senderId) {
+    const url = "http://localhost:8000/api/user/declineRequest/" + currentUserId + "/" + senderId;
+    const response = await fetch(url, {
+        method: "PUT"
+    });
+}
+
 export default {
     getUserFollowers,
     getUserFollowings,
     followUser,
-    getFollowRequests
+    getFollowRequests,
+    acceptRequest,
+    declineRequest
 }

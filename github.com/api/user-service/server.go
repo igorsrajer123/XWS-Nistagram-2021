@@ -240,7 +240,11 @@ func (userServer *UserServer) GetUserFollowingsHandler(w http.ResponseWriter, re
 
 	result := userServer.userRepo.GetUserFollowings(params)
 	if result != nil {
-		RenderJSON(w, result)
+		var usersDto []dto.UserDto
+		for _, oneUser := range result {
+			usersDto = append(usersDto, FromUserToUserDto(*oneUser))
+		}
+		RenderJSON(w, usersDto)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -256,7 +260,11 @@ func (userServer *UserServer) GetUserFollowersHandler(w http.ResponseWriter, req
 
 	result := userServer.userRepo.GetUserFollowers(params)
 	if result != nil {
-		RenderJSON(w, result)
+		var usersDto []dto.UserDto
+		for _, oneUser := range result {
+			usersDto = append(usersDto, FromUserToUserDto(*oneUser))
+		}
+		RenderJSON(w, usersDto)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -277,4 +285,20 @@ func (userServer *UserServer) GetUserFollowRequestsHandler(w http.ResponseWriter
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+}
+
+func (userServer *UserServer) AcceptFollowRequestHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	currentUserId := vars["currentId"]
+	senderId := vars["senderId"]
+
+	userServer.userRepo.AcceptFollowRequest(currentUserId, senderId)
+}
+
+func (userServer *UserServer) DeclineFollowRequestHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	currentUserId := vars["currentId"]
+	senderId := vars["senderId"]
+
+	userServer.userRepo.DeclineFollowRequest(currentUserId, senderId)
 }

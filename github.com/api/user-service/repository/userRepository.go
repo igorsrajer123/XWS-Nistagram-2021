@@ -270,3 +270,29 @@ func (userRepo *UserRepository) GetUserActiveFollowRequests(userId string) []mod
 
 	return requests
 }
+
+func (userRepo *UserRepository) AcceptFollowRequest(currentUserId string, senderId string) {
+	currentUser := &model.User{}
+	userRepo.db.Preload(clause.Associations).Where("id = ?", currentUserId).First(&currentUser)
+
+	sender := &model.User{}
+	userRepo.db.Preload(clause.Associations).Where("id = ?", senderId).First(&sender)
+
+	currentUser.Followers = append(currentUser.Followers, sender)
+	userRepo.db.Omit("Followers.*").Save(&currentUser)
+
+	sender.Followings = append(sender.Followings, currentUser)
+	userRepo.db.Omit("Followings.*").Save(&sender)
+
+	var request model.FollowRequest
+	userRepo.db.Where("sent_to_id = ? AND status = ? AND sent_by_id = ?", currentUserId, "PENDING", senderId).First(&request)
+	request.Status = "ACCEPTED"
+	userRepo.db.Save(&request)
+}
+
+func (userRepo *UserRepository) DeclineFollowRequest(currentUserId string, senderId string) {
+	var request model.FollowRequest
+	userRepo.db.Where("sent_to_id = ? AND status = ? AND sent_by_id = ?", currentUserId, "PENDING", senderId).First(&request)
+	request.Status = "DECLINED"
+	userRepo.db.Save(&request)
+}
