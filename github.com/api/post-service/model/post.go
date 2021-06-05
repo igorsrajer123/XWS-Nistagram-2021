@@ -12,6 +12,6 @@ type Post struct {
 	Tags        pq.StringArray `json:"tags" gorm:"type:text[][]"`
 	Published   time.Time      `json:"published"`
 	Location    string         `json:"location"`
-	UserRefer   int            `json:"createdBy"`
+	UserRefer   int            `json:"userRefer"`
 	Type        string         `json:"type"`
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	//	userModel "github.com/api/user-service/model"
 )
 
 type PostRepository struct {
@@ -73,12 +72,4 @@ func (postRepo *PostRepository) GetUserStatusPosts(userId int) []model.Post {
 	postRepo.db.Where("user_refer = ?", userId).Find(&statusPosts)
 
 	return statusPosts
-}
-
-func (postRepo *PostRepository) GetFeedStatusPosts(userId int) {
-	var currentUserStatusPosts []model.Post
-	postRepo.db.Where("user_refer = ?", userId).Find(&currentUserStatusPosts)
-
-	//var followingsStatusPosts []model.Post
-	//users := &userModel.User{}
 }

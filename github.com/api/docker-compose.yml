@@ -26,23 +26,6 @@ services:
         environment: 
             - POSTGRES_PASSWORD=postgres
             - POSTGRES_USER=postgres
-    user-service:
-        restart: always
-        image: user-service:compose_build
-        build:
-            context: ./user-service
-            dockerfile: Dockerfile
-        networks:
-            - backend
-        environment:
-            DBHOST: db
-            USER: postgres
-            PASSWORD: postgres
-            DBNAME: postgres
-            DBPORT: 5432
-            PORT: 8000
-        depends_on:
-            - db 
     post-service:
         restart: always
         image: post-service:compose_build
@@ -60,6 +43,23 @@ services:
             PORT: 8000
         depends_on:
             - db
+    user-service:
+        restart: always
+        image: user-service:compose_build
+        build:
+            context: ./user-service
+            dockerfile: Dockerfile
+        networks:
+            - backend
+        environment:
+            DBHOST: db
+            USER: postgres
+            PASSWORD: postgres
+            DBNAME: postgres
+            DBPORT: 5432
+            PORT: 8000
+        depends_on:
+            - db 
     authentication-service:
         restart: always
         image: authentication-service:compose_build
