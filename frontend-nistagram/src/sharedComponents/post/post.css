@@ -49,11 +49,17 @@
 }
 
 .postCenter{
-    margin: 20px 0;
+    margin-top: 20px;
+    margin-left: 20px;
     font-family: Arial, Helvetica, sans-serif;
+}
 
-    justify-content: left;
-    text-align: left;
+.postText{
+    margin-left: 1%;
+}
+
+.postTag{
+    margin-left: 1%;
 }
 
 .postBottom{

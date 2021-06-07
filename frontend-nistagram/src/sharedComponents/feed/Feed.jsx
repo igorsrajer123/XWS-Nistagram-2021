@@ -23,9 +23,8 @@ export default class Feed extends Component {
             const currentUser = await LoginService.getCurrentUser();
             if(currentUser != null){
                 const userPosts = await PostService.getUserPosts(currentUser.id);
-                if(userPosts != null){
+                if(userPosts != null)
                     this.setState({userPosts: userPosts});
-                }
             }
         }else if(this.props.parentComponent == 'previewUser'){
             this.setState({showShareOption: false});
@@ -33,10 +32,20 @@ export default class Feed extends Component {
             const user = await UserService.getUserById(this.props.userId);
             if(user != null){
                 const userPosts = await PostService.getUserPosts(user.id);
-                if(userPosts != null){
+                if(userPosts != null)
                     this.setState({userPosts: userPosts});
+            }
+        }else if(this.props.parentComponent == 'homepage'){
+            const currentUser = await LoginService.getCurrentUser();
+            if(currentUser != null){
+                const homepagePosts = await PostService.getHomepagePosts(currentUser.id);
+                if(homepagePosts != null){
+                    console.log("Homepage posts count: " + homepagePosts.length);
+                    this.setState({userPosts: homepagePosts});
                 }
             }
+        }else if(this.props.parentComponent == 'searchPage'){
+            
         }
     }
 

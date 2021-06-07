@@ -6,6 +6,7 @@ import CoverPicture from './../../assets/wallpaper.webp';
 import Feed from './../../sharedComponents/feed/Feed';
 import LoginService from './../../services/loginService';
 import Sidebar from './../../sharedComponents/sidebar/Sidebar';
+import FollowService from './../../services/followService';
 
 export default class UserProfile extends Component {
     constructor() {
@@ -14,7 +15,9 @@ export default class UserProfile extends Component {
         this.state = {
             firstName: "",
             lastName: "",
-            description: ""
+            description: "",
+            numberOfFollowers: 0,
+            numberOfFollowings: 0
         }
 
         this.clickOnName = this.clickOnName.bind(this);
@@ -31,6 +34,20 @@ export default class UserProfile extends Component {
             this.setState({firstName: currentUser.firstName});
             this.setState({lastName: currentUser.lastName});
             this.setState({description: currentUser.description});
+
+            const followings = await FollowService.getUserFollowings(currentUser.id);
+            if(followings == null){
+                this.setState({numberOfFollowings: 0});
+            }else{
+                this.setState({numberOfFollowings: followings.length});
+            }
+
+            const followers = await FollowService.getUserFollowers(currentUser.id);
+            if(followers == null){
+                this.setState({numberOfFollowers: 0});
+            }else {
+                this.setState({numberOfFollowers: 5});
+            }
         }
     }
 
@@ -49,6 +66,8 @@ export default class UserProfile extends Component {
                         <div className="profileInfo">
                             <h4 className="profileInfoName" onClick={this.clickOnName}>{this.state.firstName} {this.state.lastName}</h4>
                             <span className="profileInfoDescription">{this.state.description}</span>
+                            <span className="previewFollowing"><b>Following:</b> {this.state.numberOfFollowings}</span>
+                            <span className="previewFollowers"><b>Followers:</b> {this.state.numberOfFollowers}</span>
                         </div>
                         <div className="profileRightBottom">
                             <Sidebar parentComponent={'userProfile'}/>

@@ -72,7 +72,7 @@ export default class Post extends Component {
                         <LocationOnIcon  htmlColor="green"/>
                         <span className="postLocation">{this.state.postLocation}</span><br/><br/>
                         {this.state.postTags.map(t => 
-                            <b><span key={t} style={{color: 'dodgerblue'}}>{t}</span></b>
+                            <b><span key={t} style={{color: 'dodgerblue'}} className="postTag">{t}</span></b>
                         )}
                         <img className="postImg" src={PostPicture} alt="" />
                     </div>

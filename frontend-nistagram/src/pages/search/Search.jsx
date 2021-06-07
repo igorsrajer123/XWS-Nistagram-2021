@@ -4,6 +4,7 @@ import SearchService from './../../services/searchService';
 import ProfilePicture from './../../assets/noPicture.jpg';
 import Topbar from './../../sharedComponents/topbar/Topbar';
 import PreviewUserProfile from './../../pages/previewUserProfileModal/PreviewUserProfile';
+import Feed from './../../sharedComponents/feed/Feed';
 
 export default class Search extends Component {
     constructor() {
@@ -72,6 +73,7 @@ export default class Search extends Component {
                 <div className="searchBody">
                     <this.SearchedUsers />
                     <PreviewUserProfile ref={this.child} userId={this.state.searchedUserId} />
+                    <Feed parentComponent={'searchPage'} />
                 </div>
             </div>
         )

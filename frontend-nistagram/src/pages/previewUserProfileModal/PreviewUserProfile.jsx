@@ -100,7 +100,6 @@ export default class PreviewUserProfile extends Component {
                 this.setState({numberOfFollowers: 0});
             }else {
                 this.setState({numberOfFollowers: followers.length});
-
             }
 
             console.log(this.state.privateProfile)
