@@ -70,5 +70,26 @@ func (postServer *PostServer) GetUserStatusPostsHandler(w http.ResponseWriter, r
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
+}
 
+func (postServer *PostServer) LikePostHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["postId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	postServer.postRepo.LikePost(stringId)
+}
+
+func (postServer *PostServer) DislikePostHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["postId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	postServer.postRepo.DislikePost(stringId)
 }

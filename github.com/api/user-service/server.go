@@ -302,16 +302,3 @@ func (userServer *UserServer) DeclineFollowRequestHandler(w http.ResponseWriter,
 
 	userServer.userRepo.DeclineFollowRequest(currentUserId, senderId)
 }
-
-func (userServer *UserServer) GetFeedStatusPostsHandler(w http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	currentUserId := vars["currentId"]
-
-	posts := userServer.userRepo.GetFeedStatusPosts(currentUserId)
-	if posts != nil {
-		RenderJSON(w, posts)
-	} else {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-}

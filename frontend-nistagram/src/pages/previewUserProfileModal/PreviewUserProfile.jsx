@@ -7,6 +7,7 @@ import Sidebar from './../../sharedComponents/sidebar/Sidebar';
 import UserService from '../../services/userService';
 import FollowService from '../../services/followService';
 import LoginService from '../../services/loginService';
+import Feed from './../../sharedComponents/feed/Feed';
 
 export default class PreviewUserProfile extends Component {
     constructor(props){
@@ -187,7 +188,7 @@ export default class PreviewUserProfile extends Component {
                         <div className="previewFeed">
                             <div className="privateProfile" style={{display: this.state.showFeedAndSidebar ? 'none' : 'block'}}>This Profile is Private!</div>
                             <div className="previewPosts" style={{display: this.state.showFeedAndSidebar ? 'block' : 'none'}}>
-                                
+                                <Feed parentComponent="previewUser" userId={this.props.userId} />
                             </div>
                         </div>                   
                     </div>

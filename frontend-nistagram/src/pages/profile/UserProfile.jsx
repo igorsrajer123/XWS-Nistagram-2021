@@ -52,7 +52,7 @@ export default class UserProfile extends Component {
                         </div>
                         <div className="profileRightBottom">
                             <Sidebar parentComponent={'userProfile'}/>
-                            <Feed />
+                            <Feed parentComponent={'userProfile'} />
                         </div>
                     </div>
                 </div>

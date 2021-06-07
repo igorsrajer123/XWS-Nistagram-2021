@@ -94,3 +94,21 @@
     object-fit: cover;
     cursor: pointer;
 }
+
+.topbarLogout{
+    margin-right: 10px;
+    border-radius: 15px;
+    background-color: red;
+    font-weight: bold;
+    color: white;
+    border-style: dotted;
+    transition: 0.7s;
+    width: 70px;
+    height: 40px;
+}
+
+.topbarLogout:hover{
+    background-color: white;
+    color: red;
+    border-style: dotted;
+}

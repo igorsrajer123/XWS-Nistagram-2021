@@ -14,4 +14,5 @@ type Post struct {
 	Location    string         `json:"location"`
 	UserRefer   int            `json:"userRefer"`
 	Type        string         `json:"type"`
+	Likes       int            `json:"likes"`
 }

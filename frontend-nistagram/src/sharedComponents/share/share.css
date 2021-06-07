@@ -1,6 +1,6 @@
 .share{
     width: 50%;
-    height: 170px;
+    height: auto;
     -webkit-box-shadow: 5px 5px 20px 5px #000000; 
     box-shadow: 5px 5px 20px 5px #000000;
     margin-left: 10%;
@@ -34,7 +34,35 @@
 }
 
 .shareHr{
-    margin: 20px;
+    margin: 10px;
+}
+
+.shareCenter{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.tagShareInput{
+    margin: 5px;
+    font-family: 'Lucida Sans', Arial, sans-serif;
+    font-weight: bold;
+    width: 70%;
+    transition: 0.7s;
+}
+
+.tagShareInput:focus{
+    outline: none;
+}
+
+.locationShareInput {
+    margin: 5px;
+    font-family: 'Lucida Sans', Arial, sans-serif;
+    width: 70%;
+}
+
+.locationShareInput:focus{
+    outline: none;
 }
 
 .shareBottom{

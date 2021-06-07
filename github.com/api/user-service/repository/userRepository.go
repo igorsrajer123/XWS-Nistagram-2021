@@ -12,8 +12,6 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/api/user-service/model"
-
-	postModel "github.com/api/post-service/model"
 )
 
 type UserRepository struct {
@@ -297,31 +295,4 @@ func (userRepo *UserRepository) DeclineFollowRequest(currentUserId string, sende
 	userRepo.db.Where("sent_to_id = ? AND status = ? AND sent_by_id = ?", currentUserId, "PENDING", senderId).First(&request)
 	request.Status = "DECLINED"
 	userRepo.db.Save(&request)
-}
-
-func (userRepo *UserRepository) GetFeedStatusPosts(currentUserId string) []postModel.Post {
-	userFollowings := userRepo.GetUserFollowings(currentUserId)
-
-	var allPosts []postModel.Post
-	userRepo.db.Find(&allPosts)
-
-	var userFollowingsPosts []postModel.Post
-
-	for _, oneFollowing := range userFollowings {
-		for _, onePost := range allPosts {
-			if onePost.UserRefer == oneFollowing.ID {
-				userFollowingsPosts = append(userFollowingsPosts, onePost)
-			}
-		}
-	}
-
-	fmt.Println(len(userFollowingsPosts))
-
-	var userPosts []postModel.Post
-	userRepo.db.Where("id = ?", currentUserId).Find(&userPosts)
-
-	allShowingPosts := append(userFollowingsPosts, userPosts...)
-	fmt.Println(len(allShowingPosts))
-
-	return allShowingPosts
 }

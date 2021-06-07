@@ -61,7 +61,8 @@ func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.Str
 		UserRefer:   userRefer,
 		Published:   time.Now(),
 		Type:        "STATUS",
-		Tags:        tags}
+		Tags:        tags,
+		Likes:       0}
 
 	postRepo.db.Create(&post)
 	return post.ID
@@ -72,4 +73,20 @@ func (postRepo *PostRepository) GetUserStatusPosts(userId int) []model.Post {
 	postRepo.db.Where("user_refer = ?", userId).Find(&statusPosts)
 
 	return statusPosts
+}
+
+func (postRepo *PostRepository) LikePost(postId int) {
+	statusPost := &model.Post{}
+	postRepo.db.Where("id = ?", postId).Find(&statusPost)
+
+	statusPost.Likes = statusPost.Likes + 1
+	postRepo.db.Save(&statusPost)
+}
+
+func (postRepo *PostRepository) DislikePost(postId int) {
+	statusPost := &model.Post{}
+	postRepo.db.Where("id = ?", postId).Find(&statusPost)
+
+	statusPost.Likes = statusPost.Likes - 1
+	postRepo.db.Save(&statusPost)
 }
