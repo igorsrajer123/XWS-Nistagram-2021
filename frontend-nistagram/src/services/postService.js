@@ -61,12 +61,14 @@ async function getHomepagePosts(userId){
     currentUserFollowings = await response2.json();
 
     var followingsPosts = [];
-    for(var i = 0; i < currentUserFollowings.length; i++){
-        const url3 = "http://localhost:8000/api/post/getUserPosts/" + currentUserFollowings[i].id;  
-        const response3 = await fetch(url3);
-    
-        const oneResponse = await response3.json();
-        followingsPosts = [...followingsPosts, ...oneResponse];
+    if(currentUserFollowings != null){
+        for(var i = 0; i < currentUserFollowings.length; i++){
+            const url3 = "http://localhost:8000/api/post/getUserPosts/" + currentUserFollowings[i].id;  
+            const response3 = await fetch(url3);
+        
+            const oneResponse = await response3.json();
+            followingsPosts = [...followingsPosts, ...oneResponse];
+        }
     }
 
     var retVal = [...currentUserPosts, ...followingsPosts];

@@ -46,7 +46,7 @@ export default class UserProfile extends Component {
             if(followers == null){
                 this.setState({numberOfFollowers: 0});
             }else {
-                this.setState({numberOfFollowers: 5});
+                this.setState({numberOfFollowers: followers.length});
             }
         }
     }

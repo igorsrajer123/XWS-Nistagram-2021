@@ -20,7 +20,8 @@ export default class Post extends Component {
             postDate: null,
             postTags: [],
             postLocation: "",
-            likes: 0
+            likes: 0,
+            hideBottomPart: false
         };
     
         this.likeHandler = this.likeHandler.bind(this);
@@ -51,6 +52,12 @@ export default class Post extends Component {
             this.setState({postUserFirstName: user.firstName});
             this.setState({postUserLastName: user.lastName});
         }
+
+        if(this.props.parentComponent == "Search"){
+            this.setState({hideBottomPart: true});
+        }else {
+            this.setState({hideBottomPart: false});
+        }
     }
 
     render() {
@@ -76,12 +83,12 @@ export default class Post extends Component {
                         )}
                         <img className="postImg" src={PostPicture} alt="" />
                     </div>
-                    <div className="postBottom">
+                    <div className="postBottom" >
                         <div className="postBottomLeft">
-                            <img className="likeIcon" src={LikeIcon} onClick={this.likeHandler} alt="" />
+                            <img className="likeIcon" src={LikeIcon} onClick={this.likeHandler} alt="" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible'}} />
                             <span className="postLikeCounter">{this.state.likes} people likes this!</span>
                         </div>
-                        <div className="postBottomRight">
+                        <div className="postBottomRight" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible'}}>
                             <span className="postCommentText">0 comments</span>
                         </div>
                     </div>

@@ -4,7 +4,7 @@ import SearchService from './../../services/searchService';
 import ProfilePicture from './../../assets/noPicture.jpg';
 import Topbar from './../../sharedComponents/topbar/Topbar';
 import PreviewUserProfile from './../../pages/previewUserProfileModal/PreviewUserProfile';
-import Feed from './../../sharedComponents/feed/Feed';
+import Post from './../../sharedComponents/post/Post';
 
 export default class Search extends Component {
     constructor() {
@@ -16,7 +16,9 @@ export default class Search extends Component {
             publicSearch: false,
             searchParams: "",
             searchedUsers: [],
-            searchedUserId: 0
+            searchedUserId: 0,
+            searchedPosts: [],
+            noResultsFound: false
         }
 
         this.userNameClick = this.userNameClick.bind(this);
@@ -32,14 +34,19 @@ export default class Search extends Component {
         this.setState({publicSearch: publ});
 
         if(publ == "true"){
-            console.log("Public Search!");
             const searchedUsersResult = await SearchService.publicSearch(search);
             this.setState({searchedUsers: searchedUsersResult});
-
+            const searchedPostsResult = await SearchService.publicPostsSearch(search)
+            this.setState({searchedPosts: searchedPostsResult});
         }else {
-            console.log("Private Search!");
             const searchedUsersResult = await SearchService.privateSearch(search);
             this.setState({searchedUsers: searchedUsersResult});
+            const searchedPostsResult = await SearchService.privatePostsSearch(search);
+            this.setState({searchedPosts: searchedPostsResult});
+        }
+
+        if(this.state.searchedPosts == null && this.state.searchedUsers == null){
+            this.setState({noResultsFound: true});
         }
     }
 
@@ -51,7 +58,7 @@ export default class Search extends Component {
     SearchedUsers = () => {
         if(this.state.searchedUsers == null){
             return <div>
-                    <b style={{fontSize: '25px', color: 'red'}}>No Results Found for Your Search!</b>
+                    
                     </div>
         }else{
             return this.state.searchedUsers.map(user =>
@@ -63,6 +70,20 @@ export default class Search extends Component {
         }
     }
 
+    SearchedPosts = () => {
+        if(this.state.searchedPosts != null){
+            return this.state.searchedPosts.map(post =>
+                <div className="searchPost" key={post.id}>
+                    <Post key={post.id} post={post} parentComponent="Search" />
+                </div>
+            );
+        }else {
+            return <div>
+                        
+                    </div>
+        }
+    }
+
     render() {
         return (
             <div className="searchWrapper">
@@ -71,9 +92,14 @@ export default class Search extends Component {
                     <h1>Your Searched Results...</h1>
                 </div>
                 <div className="searchBody">
-                    <this.SearchedUsers />
-                    <PreviewUserProfile ref={this.child} userId={this.state.searchedUserId} />
-                    <Feed parentComponent={'searchPage'} />
+                    <div className="searchUsersWrapper">
+                        <this.SearchedUsers />
+                        <PreviewUserProfile ref={this.child} userId={this.state.searchedUserId} />
+                    </div>
+                    <div className="searchPostsWrapper">
+                        <this.SearchedPosts />
+                    </div>
+                    <p style={{display: this.state.noResultsFound ? 'block' : 'none'}} className="noResultsFound"><b>No Results Found for your Search!</b></p>
                 </div>
             </div>
         )

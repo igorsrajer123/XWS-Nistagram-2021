@@ -40,12 +40,9 @@ export default class Feed extends Component {
             if(currentUser != null){
                 const homepagePosts = await PostService.getHomepagePosts(currentUser.id);
                 if(homepagePosts != null){
-                    console.log("Homepage posts count: " + homepagePosts.length);
                     this.setState({userPosts: homepagePosts});
                 }
             }
-        }else if(this.props.parentComponent == 'searchPage'){
-            
         }
     }
 
@@ -58,7 +55,7 @@ export default class Feed extends Component {
                     </div>
                     <div className="posts">
                         {this.state.userPosts.map( p => (
-                            <Post key={p.id} post={p} />
+                            <Post key={p.id} post={p} parentComponent="Feed" />
                         ))}
                     </div>
                 </div>

@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/api/user-service v1.0.0
+	github.com/api/post-service v1.0.0
 	github.com/form3tech-oss/jwt-go v3.2.3+incompatible
 	github.com/gomodule/redigo v1.8.4 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
@@ -15,4 +16,7 @@ require (
 	gorm.io/gorm v1.21.10
 )
 
-replace github.com/api/user-service => ../../myapp/github.com/api/user-service
+replace (
+	github.com/api/user-service => ../../myapp/github.com/api/user-service
+	github.com/api/post-service => ../../myapp/github.com/api/post-service
+	)

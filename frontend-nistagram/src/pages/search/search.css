@@ -13,9 +13,10 @@
 }
 
 .searchBody{
-    width: 50%;
-    text-align: center;
+    width: 70%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 .searchUser{
@@ -49,4 +50,16 @@
 
 .searchUserName:hover{
     text-decoration: underline;
+}
+
+.searchPostsWrapper {  
+    display: flex;
+    flex-direction: column;
+}
+
+.noResultsFound {
+    font-family: Gill Sans, sans-serif;
+    color: red;
+    font-size: 25px;
+    text-align: center;
 }

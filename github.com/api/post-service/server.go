@@ -93,3 +93,20 @@ func (postServer *PostServer) DislikePostHandler(w http.ResponseWriter, req *htt
 	stringId, _ := strconv.Atoi(id)
 	postServer.postRepo.DislikePost(stringId)
 }
+
+func (postServer *PostServer) SearchPublicPostsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	searchParam, ok := vars["searchParam"]
+	if !ok {
+		fmt.Println("Search parameter is missing!")
+	}
+
+	searchResult := postServer.postRepo.SearchPublicPosts(searchParam)
+
+	if len(searchResult) > 0 {
+		RenderJSON(w, searchResult)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+}

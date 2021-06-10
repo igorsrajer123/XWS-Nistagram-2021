@@ -31,6 +31,7 @@ func main() {
 	router.HandleFunc("/getUserPosts/{userId}", server.GetUserStatusPostsHandler).Methods("GET")
 	router.HandleFunc("/likePost/{postId}", server.LikePostHandler).Methods("PUT")
 	router.HandleFunc("/dislikePost/{postId}", server.DislikePostHandler).Methods("PUT")
+	router.HandleFunc("/searchPublicPosts/{searchParam}", server.SearchPublicPostsHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

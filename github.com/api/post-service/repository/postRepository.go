@@ -3,12 +3,15 @@ package repository
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/api/post-service/model"
 	"github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	userModel "github.com/api/user-service/model"
 )
 
 type PostRepository struct {
@@ -70,7 +73,7 @@ func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.Str
 
 func (postRepo *PostRepository) GetUserStatusPosts(userId int) []model.Post {
 	var statusPosts []model.Post
-	postRepo.db.Where("user_refer = ?", userId).Find(&statusPosts)
+	postRepo.db.Where("user_refer = ? AND type = ?", userId, "STATUS").Find(&statusPosts)
 
 	return statusPosts
 }
@@ -89,4 +92,29 @@ func (postRepo *PostRepository) DislikePost(postId int) {
 
 	statusPost.Likes = statusPost.Likes - 1
 	postRepo.db.Save(&statusPost)
+}
+
+func (postRepo *PostRepository) SearchPublicPosts(searchParameter string) []model.Post {
+	var users []userModel.User
+	postRepo.db.Where("private_profile = ?", false).Find(&users)
+
+	var myPosts []model.Post
+	for _, oneUser := range users {
+		userPosts := postRepo.GetUserStatusPosts(oneUser.ID)
+		for _, onePost := range userPosts {
+
+			if strings.Contains(strings.ToLower(onePost.Location), strings.ToLower(searchParameter)) {
+				myPosts = append(myPosts, onePost)
+				continue
+			}
+
+			for _, oneTag := range onePost.Tags {
+				if strings.Contains(strings.ToLower(oneTag), strings.ToLower(searchParameter)) {
+					myPosts = append(myPosts, userPosts...)
+					break
+				}
+			}
+		}
+	}
+	return myPosts
 }

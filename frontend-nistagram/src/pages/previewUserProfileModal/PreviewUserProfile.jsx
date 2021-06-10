@@ -119,15 +119,17 @@ export default class PreviewUserProfile extends Component {
             var followingUser = false;
             if(currentUser != null){
                 const currentUserFollowings = await FollowService.getUserFollowings(currentUser.id);
-                for (var i = 0; i < currentUserFollowings.length; ++i) {
-                    if(this.props.userId == currentUser.id){
-                        this.setState({publicSearch: true});
-                        break;
-                    }
-
-                    if(currentUserFollowings[i].id == this.props.userId && this.props.userId != currentUser.id) {
-                        followingUser = true;
-                        break;
+                if(currentUserFollowings != null){
+                    for (var i = 0; i < currentUserFollowings.length; ++i) {
+                        if(this.props.userId == currentUser.id){
+                            this.setState({publicSearch: true});
+                            break;
+                        }
+    
+                        if(currentUserFollowings[i].id == this.props.userId && this.props.userId != currentUser.id) {
+                            followingUser = true;
+                            break;
+                        }
                     }
                 }
             }
