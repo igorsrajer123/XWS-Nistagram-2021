@@ -57,7 +57,7 @@ func (postRepo *PostRepository) GetAllPosts() []model.Post {
 }
 
 func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.StringArray, location string,
-	userRefer int, fileId uint) int {
+	userRefer int) int {
 
 	post := model.Post{
 		Description: description,
@@ -67,9 +67,10 @@ func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.Str
 		Type:        "STATUS",
 		Tags:        tags,
 		Likes:       0,
-		ImageID:     fileId}
+		ImageID:     0}
 
 	postRepo.db.Create(&post)
+
 	return post.ID
 }
 
@@ -121,15 +122,22 @@ func (postRepo *PostRepository) SearchPublicPosts(searchParameter string) []mode
 	return myPosts
 }
 
-//working with files
-func (postRepo *PostRepository) CreateFile(file *model.File) error {
+func (postRepo *PostRepository) CreateStatusPostPhoto(file *model.File, postId int) error {
 	postRepo.db.Create(file)
+
+	var post model.Post
+	postRepo.db.Where("id = ?", postId).First(&post)
+
+	post.ImageID = file.ID
+	postRepo.db.Save(&post)
+	fmt.Println(post.ImageID)
+
 	return nil
 }
 
-func (postRepo *PostRepository) FindFileIdByPath(path string) uint {
+func (postRepo *PostRepository) FindIdByPath(path string) uint {
 	var file model.File
-	postRepo.db.Where("path = ?", path).First(&file)
+	postRepo.db.Where("path = ? ", path).First(&file)
 	return file.ID
 }
 
@@ -137,4 +145,11 @@ func (postRepo *PostRepository) FindFilePathById(imageID uint) string {
 	var file model.File
 	postRepo.db.Where("id = ? ", imageID).First(&file)
 	return file.Path
+}
+
+func (postRepo *PostRepository) GetAllPostPhotos() []model.File {
+	var postPhotos []model.File
+	postRepo.db.Find(&postPhotos)
+
+	return postPhotos
 }

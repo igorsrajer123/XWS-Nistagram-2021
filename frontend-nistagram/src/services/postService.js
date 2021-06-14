@@ -77,10 +77,27 @@ async function getHomepagePosts(userId){
     return homepagePosts;
 }
 
+async function getPostPhoto(imageId){
+    const url = "http://localhost:8000/api/post/getPostPhoto/" + imageId;
+    if(imageId != undefined && imageId != 0){
+        var retVal = null;
+        await fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                retVal = URL.createObjectURL(blob)
+        });
+
+        return retVal;
+    }else {
+        return null;
+    }
+}
+
 export default{
     getUserPosts,
     createStatusPost,
     likePost,
     dislikePost,
-    getHomepagePosts
+    getHomepagePosts,
+    getPostPhoto
 }

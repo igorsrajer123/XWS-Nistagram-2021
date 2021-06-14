@@ -1,6 +1,7 @@
 .post{
     width: auto;
-    max-width: 85%;
+    max-width: 65%;
+    min-width: 40%;
     border-radius: 10px;
     -webkit-box-shadow: 5px 5px 30px 6px #000000; 
     box-shadow: 5px 5px 30px 6px #000000;
@@ -66,6 +67,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 5px;
 }
 
 .postBottomLeft{

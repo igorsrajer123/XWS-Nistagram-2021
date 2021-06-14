@@ -417,7 +417,6 @@ func (userServer *UserServer) GetAllUserPhotos(w http.ResponseWriter, req *http.
 }
 
 func (userServer *UserServer) GetCoverImageById(w http.ResponseWriter, req *http.Request) {
-
 	vars := mux.Vars(req)
 	imageID := vars["imageID"]
 	u64, err := strconv.ParseUint(imageID, 10, 32)

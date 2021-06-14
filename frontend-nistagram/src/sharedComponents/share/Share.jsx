@@ -19,11 +19,11 @@ export default class Share extends Component {
             showTagOption: false,
             location: "",
             showLocationOption: false,
-            profilePhoto: null
+            profilePhoto: null,
+            currentUserId: 0
         }
 
         this.descriptionInputChange = this.descriptionInputChange.bind(this);
-        this.createNewPost = this.createNewPost.bind(this);
         this.clickTagOption = this.clickTagOption.bind(this);
         this.clickLocationOption = this.clickLocationOption.bind(this);
         this.locationInputChange = this.locationInputChange.bind(this);
@@ -35,6 +35,7 @@ export default class Share extends Component {
             if(currentUser != null){
                 const data = await UserService.getUserProfilePhoto(currentUser.profileImageId);
                 this.setState({profilePhoto: data});
+                this.setState({currentUserId: currentUser.id});
             }
     }
 
@@ -48,65 +49,50 @@ export default class Share extends Component {
 
     tagInputChange = (event) => this.setState({tags: event.target.value});
 
-    async createNewPost() {
-        
-        const user = await LoginService.getCurrentUser();
-        if(user != null){
-            const tagsString = this.state.tags;
-            const tagsArray = tagsString.split(' ');
-
-            const object = {
-                description: this.state.descriptionText,
-                userRefer: user.id,
-                location: this.state.location,
-                tags: tagsArray
-            };
-
-            const post = await PostService.createStatusPost(object);
-        }else {
-            window.location.href = "/";
-        }
-    }
-
     render() {
         return (
             <div className="share">
                 <div className="shareWrapper">
-                    <div className="shareTop">
-                        <img src={this.state.profilePhoto} alt="" className="shareProfileImg" />
-                        <input
-                        placeholder="What's on your mind?"
-                        type="text"
-                        className="shareInput"
-                        onChange={this.descriptionInputChange}
-                        />
-                    </div>
-                    <hr className="shareHr"/>
-                    <div className="shareCenter">
-                        <input className="tagShareInput" onChange={this.tagInputChange} style={{display: this.state.showTagOption ? 'block' : 'none'}}></input>
-                        <input className="locationShareInput" onChange={this.locationInputChange} style={{display: this.state.showLocationOption ? 'block' : 'none'}} placeholder="Location..."></input>
-                    </div>
-                    <div className="shareBottom">
-                        <div className="shareOptions">
-                            <div className="shareOption">
-                                <PermMediaIcon htmlColor="tomato" className="shareIcon"/>
-                                <span className="shareOptionText">Photo or Video</span>
-                            </div>
-                            <div className="shareOption">
-                                <LabelIcon htmlColor="blue" className="shareIcon"/>
-                                <span className="shareOptionText" onClick={this.clickTagOption}>Tag</span>
-                            </div>
-                            <div className="shareOption">
-                                <LocationOnIcon htmlColor="green" className="shareIcon"/>
-                                <span className="shareOptionText"onClick={this.clickLocationOption}>Location</span>
-                            </div>
-                            <div className="shareOption">
-                                <EmojiEmotionsIcon htmlColor="goldenrod" className="shareIcon"/>
-                                <span className="shareOptionText">Feelings</span>
-                            </div>
+                    <form action={"http://localhost:8000/api/post/createStatusPost"} enctype="multipart/form-data" method="POST">
+                        <div className="shareTop">
+                            <img src={this.state.profilePhoto} alt="" className="shareProfileImg" />
+                            <input
+                                placeholder="What's on your mind?"
+                                type="text"
+                                className="shareInput"
+                                onChange={this.descriptionInputChange}
+                                name="description"
+                                id="description"
+                            />
+                            <input style={{display: 'none'}} name="user" id="user" value={this.state.currentUserId} />
                         </div>
-                        <button className="shareButton" onClick={this.createNewPost}>Share</button>
-                    </div>
+                        <hr className="shareHr"/>
+                        <div className="shareCenter">
+                            <input className="tagShareInput" onChange={this.tagInputChange} name="tags" id="tags" style={{display: this.state.showTagOption ? 'block' : 'none'}}></input>
+                            <input className="locationShareInput" onChange={this.locationInputChange} name="location" id="location" style={{display: this.state.showLocationOption ? 'block' : 'none'}} placeholder="Location..."></input>
+                        </div>
+                        <div className="shareBottom">
+                            <div className="shareOptions">
+                                <div className="shareOption">
+                                    <PermMediaIcon htmlColor="tomato" className="shareIcon"/>
+                                    <input type="file" name="file" className="photoOrVideo" />
+                                </div>
+                                <div className="shareOption">
+                                    <LabelIcon htmlColor="blue" className="shareIcon"/>
+                                    <span className="shareOptionText" onClick={this.clickTagOption}>Tag</span>
+                                </div>
+                                <div className="shareOption">
+                                    <LocationOnIcon htmlColor="green" className="shareIcon"/>
+                                    <span className="shareOptionText"onClick={this.clickLocationOption}>Location</span>
+                                </div>
+                                <div className="shareOption">
+                                    <EmojiEmotionsIcon htmlColor="goldenrod" className="shareIcon"/>
+                                    <span className="shareOptionText">Feelings</span>
+                                </div>
+                            </div>
+                            <input type="submit" value="Share" className="shareButton" />
+                        </div>
+                    </form>
                 </div>
             </div>
         )

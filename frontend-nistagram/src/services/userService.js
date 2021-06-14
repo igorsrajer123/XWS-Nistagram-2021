@@ -45,7 +45,6 @@ async function getUserById(id){
 
 async function getUserCoverPhoto(coverImageId){
     const url = "http://localhost:8000/api/user/getCoverPhoto/" + coverImageId;
-    console.log(coverImageId);
     if(coverImageId != undefined && coverImageId != 0){
         var retVal = null;
         await fetch(url)
@@ -62,7 +61,6 @@ async function getUserCoverPhoto(coverImageId){
 
 async function getUserProfilePhoto(profileImageId){
     const url = "http://localhost:8000/api/user/getProfilePhoto/" + profileImageId;
-    console.log(profileImageId);
     if(profileImageId != undefined && profileImageId != 0){
         var retVal = null;
         await fetch(url)

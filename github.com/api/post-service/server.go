@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"io"
-	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/api/post-service/model"
 	"github.com/api/post-service/repository"
@@ -39,60 +42,59 @@ func (postServer *PostServer) GetAllPostsHandler(w http.ResponseWriter, req *htt
 }
 
 func (postServer *PostServer) CreateStatusPostHandler(w http.ResponseWriter, req *http.Request) {
-	contentType := req.Header.Get("Content-Type")
-	mediatype, _, err := mime.ParseMediaType(contentType)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if mediatype != "application/json" {
-		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
-		return
-	}
-
-	post, err := DecodeBody(req.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	//---------------------------------------------
 	req.ParseMultipartForm(32 << 20)
 	file, handle, err := req.FormFile("file")
 
 	if err != nil {
-		fmt.Println(err)
-		fmt.Fprintf(w, "%v", err)
-		return
+		var post model.Post
+		post.Description = req.PostFormValue("description")
+		post.Location = req.PostFormValue("location")
+		userId := req.PostFormValue("user")
+		post.UserRefer, _ = strconv.Atoi(userId)
+		stringTags := req.PostFormValue("tags")
+		post.Tags = strings.Split(stringTags, " ")
+
+		postId := postServer.postRepo.CreateStatusPost(post.Description, post.Tags, post.Location, post.UserRefer)
+		fmt.Println(postId)
+
+	} else {
+		defer file.Close()
+		absPath, _ := os.Getwd()
+
+		path := filepath.Join(absPath, "files", handle.Filename)
+		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			http.Error(w, "Expected file", http.StatusBadRequest)
+			return
+		}
+
+		_, err = io.Copy(f, file)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		var savingFile model.File
+		savingFile.Path = path
+		savingFile.Type = "IMAGE"
+
+		var post model.Post
+		post.Description = req.PostFormValue("description")
+		post.Location = req.PostFormValue("location")
+		userId := req.PostFormValue("user")
+		post.UserRefer, _ = strconv.Atoi(userId)
+		stringTags := req.PostFormValue("tags")
+		post.Tags = strings.Split(stringTags, " ")
+
+		postId := postServer.postRepo.CreateStatusPost(post.Description, post.Tags, post.Location, post.UserRefer)
+
+		err = postServer.postRepo.CreateStatusPostPhoto(&savingFile, postId)
+		if err != nil {
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
 	}
-	defer file.Close()
-	absPath, err := os.Getwd()
 
-	path := filepath.Join(absPath, "files", handle.Filename)
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
-
-	if err != nil {
-		http.Error(w, "Expected file", http.StatusBadRequest)
-		return
-	}
-	io.Copy(f, file)
-
-	var savingFile model.File
-	savingFile.Path = path
-	savingFile.Type = "IMAGE"
-
-	err = postServer.postRepo.CreateFile(&savingFile)
-
-	if err != nil {
-		w.WriteHeader(http.StatusExpectationFailed)
-		return
-	}
-
-	fileId := postServer.postRepo.FindFileIdByPath(path)
-
-	//----------------------------------------------
-	id := postServer.postRepo.CreateStatusPost(post.Description, post.Tags, post.Location, post.UserRefer, fileId)
-	RenderJSON(w, id)
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (postServer *PostServer) GetUserStatusPostsHandler(w http.ResponseWriter, req *http.Request) {
@@ -148,4 +150,48 @@ func (postServer *PostServer) SearchPublicPostsHandler(w http.ResponseWriter, re
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+}
+
+func (postServer *PostServer) GetAllPostPhotosHandler(w http.ResponseWriter, req *http.Request) {
+	allPhotos := postServer.postRepo.GetAllPostPhotos()
+
+	RenderJSON(w, allPhotos)
+}
+
+func (postServer *PostServer) GetPostPictureHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	imageID := vars["imageID"]
+	u64, err := strconv.ParseUint(imageID, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	image_ID := uint(u64)
+	imagePath := postServer.postRepo.FindFilePathById(image_ID)
+
+	f, err := os.Open(imagePath)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("	***************************")
+	}
+	defer f.Close()
+
+	image, _, err := image.Decode(f)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("	***************************")
+	}
+
+	buffer := new(bytes.Buffer)
+
+	if err := jpeg.Encode(buffer, image, nil); err != nil {
+		fmt.Println("Unable to encode image.")
+		fmt.Println("	***************************")
+	}
+
+	mediaForFrontend := buffer.Bytes()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(mediaForFrontend)
 }

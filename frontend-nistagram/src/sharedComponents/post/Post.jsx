@@ -22,7 +22,9 @@ export default class Post extends Component {
             postLocation: "",
             likes: 0,
             hideBottomPart: false,
-            profilePhoto: ""
+            profilePhoto: "",
+            postPhotoId: 0,
+            postPhoto: null
         };
     
         this.likeHandler = this.likeHandler.bind(this);
@@ -47,6 +49,7 @@ export default class Post extends Component {
         this.setState({postTags: this.props.post.tags});
         this.setState({postLocation: this.props.post.location});
         this.setState({likes: this.props.post.likes});
+        this.setState({postPhotoId: this.props.post.imageID});
 
         const user = await UserService.getUserById(this.props.post.userRefer)
         if(user != null){
@@ -61,6 +64,12 @@ export default class Post extends Component {
             this.setState({hideBottomPart: true});
         }else {
             this.setState({hideBottomPart: false});
+        }
+
+        const data = await PostService.getPostPhoto(this.props.post.imageID);
+        if(data != null){
+            this.setState({postPhotoId: this.props.post.imageID});
+            this.setState({postPhoto: data});
         }
     }
 
@@ -85,7 +94,7 @@ export default class Post extends Component {
                         {this.state.postTags.map(t => 
                             <b><span key={t} style={{color: 'dodgerblue'}} className="postTag">{t}</span></b>
                         )}
-                        <img className="postImg" src={PostPicture} alt="" />
+                        <img className="postImg" src={this.state.postPhoto} style={{display: this.state.postPhotoId == 0 ? 'none' : 'block'}} alt="" />
                     </div>
                     <div className="postBottom" >
                         <div className="postBottomLeft">

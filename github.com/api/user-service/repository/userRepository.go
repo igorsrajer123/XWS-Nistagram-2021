@@ -307,7 +307,6 @@ func (userRepo *UserRepository) CreateCoverPhoto(file *model.UserFile, userId st
 
 	user.CoverImageID = file.ID
 	userRepo.db.Save(&user)
-	fmt.Println(user.CoverImageID)
 
 	return nil
 }
@@ -321,7 +320,6 @@ func (userRepo *UserRepository) CreateProfilePhoto(file *model.UserFile, userId 
 
 	user.ProfileImageID = file.ID
 	userRepo.db.Save(&user)
-	fmt.Println(user.ProfileImageID)
 
 	return nil
 }

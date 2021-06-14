@@ -43,6 +43,11 @@
     width: 50%;
 }
 
+.photoOrVideo{
+    width: 20px;
+    cursor: pointer;
+}
+
 .tagShareInput{
     margin: 5px;
     font-family: 'Lucida Sans', Arial, sans-serif;
