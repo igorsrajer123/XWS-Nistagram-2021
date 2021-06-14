@@ -43,8 +43,44 @@ async function getUserById(id){
     return data;
 }
 
+async function getUserCoverPhoto(coverImageId){
+    const url = "http://localhost:8000/api/user/getCoverPhoto/" + coverImageId;
+    console.log(coverImageId);
+    if(coverImageId != undefined && coverImageId != 0){
+        var retVal = null;
+        await fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                retVal = URL.createObjectURL(blob)
+        });
+
+        return retVal;
+    }else {
+        return null;
+    }
+}
+
+async function getUserProfilePhoto(profileImageId){
+    const url = "http://localhost:8000/api/user/getProfilePhoto/" + profileImageId;
+    console.log(profileImageId);
+    if(profileImageId != undefined && profileImageId != 0){
+        var retVal = null;
+        await fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                retVal = URL.createObjectURL(blob)
+        });
+
+        return retVal;
+    }else {
+        return null;
+    }
+}
+
 export default {
     editUserInfo,
     changePassword,
-    getUserById
+    getUserById,
+    getUserCoverPhoto,
+    getUserProfilePhoto
 }

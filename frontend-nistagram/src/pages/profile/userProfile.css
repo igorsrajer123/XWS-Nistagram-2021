@@ -53,3 +53,39 @@
     display: flex;
 }
 
+.form {
+    width: 30%;
+    display: flex;
+    margin: 10px;
+}
+input[type="file"] {
+    margin: 5px;
+    background-color: dodgerblue;
+    border-style: solid;
+    border-color: lightskyblue;
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+}
+
+
+.submit {
+    padding: 3px;
+    background-color: dodgerblue;
+    border-color: lightskyblue;
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 15px;
+    color: white;
+    width: 40%;
+}
+
+.submit:hover {
+    background-color: greenyellow;
+    border-style: solid;
+    border-color: lightskyblue;
+    color: dodgerblue;
+}
+

@@ -15,4 +15,11 @@ type Post struct {
 	UserRefer   int            `json:"userRefer"`
 	Type        string         `json:"type"`
 	Likes       int            `json:"likes"`
+	ImageID     uint           `json:"imageID"`
+}
+
+type File struct {
+	ID   uint   `json:"id"`
+	Path string `json:"path"`
+	Type string `json:"type"`
 }

@@ -43,6 +43,8 @@ services:
             PORT: 8000
         depends_on:
             - db
+        volumes:
+            - ./user-service/files:/go/app/files
     user-service:
         restart: always
         image: user-service:compose_build
@@ -60,6 +62,8 @@ services:
             PORT: 8000
         depends_on:
             - db 
+        volumes:
+            - ./user-service/files:/go/app/files
     authentication-service:
         restart: always
         image: authentication-service:compose_build
@@ -76,7 +80,9 @@ services:
             DBPORT: 5432
             PORT: 8000
         depends_on:
-            - db   
+            - db 
+        volumes:
+            - ./user-service/files:/go/app/files  
 networks: 
     backend:
         name: nistagram

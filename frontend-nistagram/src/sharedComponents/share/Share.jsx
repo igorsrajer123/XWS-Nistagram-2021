@@ -7,6 +7,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import ProfilePicture from './../../assets/noPicture.jpg';
 import LoginService from './../../services/loginService';
 import PostService from './../../services/postService';
+import UserService from './../../services/userService';
 
 export default class Share extends Component {
     constructor(props){
@@ -17,7 +18,8 @@ export default class Share extends Component {
             tags: "",
             showTagOption: false,
             location: "",
-            showLocationOption: false
+            showLocationOption: false,
+            profilePhoto: null
         }
 
         this.descriptionInputChange = this.descriptionInputChange.bind(this);
@@ -26,6 +28,14 @@ export default class Share extends Component {
         this.clickLocationOption = this.clickLocationOption.bind(this);
         this.locationInputChange = this.locationInputChange.bind(this);
         this.tagInputChange = this.tagInputChange.bind(this);
+    }
+
+    async componentDidMount() {
+        const currentUser = await LoginService.getCurrentUser();
+            if(currentUser != null){
+                const data = await UserService.getUserProfilePhoto(currentUser.profileImageId);
+                this.setState({profilePhoto: data});
+            }
     }
 
     descriptionInputChange = (event) => this.setState({descriptionText: event.target.value});
@@ -63,7 +73,7 @@ export default class Share extends Component {
             <div className="share">
                 <div className="shareWrapper">
                     <div className="shareTop">
-                        <img src={ProfilePicture} alt="" className="shareProfileImg" />
+                        <img src={this.state.profilePhoto} alt="" className="shareProfileImg" />
                         <input
                         placeholder="What's on your mind?"
                         type="text"

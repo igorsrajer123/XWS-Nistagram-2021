@@ -12,6 +12,8 @@ type UserDto struct {
 	PrivateProfile *bool  `json:"privateProfile"`
 	Description    string `json:"description"`
 	Website        string `json:"website"`
+	CoverImageID   uint   `json:"coverImageId"`
+	ProfileImageID uint   `json:"profileImageId"`
 }
 
 type ResponseId struct {

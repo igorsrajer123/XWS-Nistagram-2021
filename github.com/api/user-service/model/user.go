@@ -15,6 +15,8 @@ type User struct {
 	Website        string  `json:"website"`
 	Followings     []*User `gorm:"foreignkey:ID;many2many:followings;" json:"followings"`
 	Followers      []*User `gorm:"foreignkey:ID;many2many:followers;" json:"followers"`
+	CoverImageID   uint    `json:"coverImageId"`
+	ProfileImageID uint    `json:"profileImageId"`
 }
 
 type FollowRequest struct {
@@ -22,4 +24,10 @@ type FollowRequest struct {
 	SentById int    `json:"sentById"`
 	SentToId int    `json:"sentToId"`
 	Status   string `json:"status"`
+}
+
+type UserFile struct {
+	ID   uint   `json:"id"`
+	Path string `json:"path"`
+	Type string `json:"type"`
 }

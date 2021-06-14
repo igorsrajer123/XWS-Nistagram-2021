@@ -21,7 +21,8 @@ export default class Post extends Component {
             postTags: [],
             postLocation: "",
             likes: 0,
-            hideBottomPart: false
+            hideBottomPart: false,
+            profilePhoto: ""
         };
     
         this.likeHandler = this.likeHandler.bind(this);
@@ -51,6 +52,9 @@ export default class Post extends Component {
         if(user != null){
             this.setState({postUserFirstName: user.firstName});
             this.setState({postUserLastName: user.lastName});
+
+            const data = await UserService.getUserProfilePhoto(user.profileImageId);
+            this.setState({profilePhoto: data});
         }
 
         if(this.props.parentComponent == "Search"){
@@ -66,7 +70,7 @@ export default class Post extends Component {
                 <div className="postWrapper">
                     <div className="postTop">
                         <div className="postTopLeft">
-                            <img className="postProfileImg" src={ProfilePicture} alt="" />
+                            <img className="postProfileImg" src={this.state.profilePhoto} alt="" />
                             <span className="postUsername">{this.state.postUserFirstName} {this.state.postUserLastName}</span>
                             <span className="postDate">{this.state.postDate}</span>
                         </div>

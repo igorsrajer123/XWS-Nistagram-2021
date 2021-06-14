@@ -7,6 +7,7 @@ import Feed from './../../sharedComponents/feed/Feed';
 import LoginService from './../../services/loginService';
 import Sidebar from './../../sharedComponents/sidebar/Sidebar';
 import FollowService from './../../services/followService';
+import UserService from './../../services/userService';
 
 export default class UserProfile extends Component {
     constructor() {
@@ -17,7 +18,10 @@ export default class UserProfile extends Component {
             lastName: "",
             description: "",
             numberOfFollowers: 0,
-            numberOfFollowings: 0
+            numberOfFollowings: 0,
+            coverPhoto: null,
+            profilePhoto: null,
+            currentUserId: null
         }
 
         this.clickOnName = this.clickOnName.bind(this);
@@ -31,6 +35,7 @@ export default class UserProfile extends Component {
         if(currentUser == null){
             window.location.href = "/";
         }else{
+            this.setState({currentUserId: currentUser.id});
             this.setState({firstName: currentUser.firstName});
             this.setState({lastName: currentUser.lastName});
             this.setState({description: currentUser.description});
@@ -48,6 +53,20 @@ export default class UserProfile extends Component {
             }else {
                 this.setState({numberOfFollowers: followers.length});
             }
+
+            const data = await UserService.getUserCoverPhoto(currentUser.coverImageId);
+            if(data == null)
+                this.setState({coverPhoto: CoverPicture});
+            else
+            this.setState({coverPhoto: data});
+            
+            
+
+            const data2 = await UserService.getUserProfilePhoto(currentUser.profileImageId);
+            if(data2 == null)
+                this.setState({profilePhoto: ProfilePicture});
+            else
+            this.setState({profilePhoto: data2});
         }
     }
 
@@ -55,12 +74,21 @@ export default class UserProfile extends Component {
         return (
             <div>
                 <Topbar parentComponent={'userProfile'} />
+                <iframe name="dummyframe" id="dummyframe" style={{display: "none"}}></iframe>
                 <div className="profile">
                     <div className="profileRight">
                         <div className="profileRightTop">
                             <div className="profileCover">
-                                <img src={CoverPicture} alt="" className="profileCoverImg"/>
-                                <img src={ProfilePicture} alt="" className="profileUserImg"/>
+                                <img src={this.state.coverPhoto} alt="No picture..." className="profileCoverImg"/>
+                                <img src={this.state.profilePhoto} alt="" className="profileUserImg"/>
+                                <form className="form" action={"http://localhost:8000/api/user/saveCoverPhoto/" + this.state.currentUserId} target="dummyframe" enctype="multipart/form-data" method="POST">
+                                    <input type="file" name="file" />
+                                    <input type="submit" value="Save Cover Photo" className="submit" onClick={this.clickOnName} />
+                                </form>
+                                <form className="form" action={"http://localhost:8000/api/user/saveProfilePhoto/" + this.state.currentUserId} target="dummyframe" enctype="multipart/form-data" method="POST">
+                                    <input type="file" name="file" />
+                                    <input type="submit" value="Save Profile Photo" className="submit" onClick={this.clickOnName} />
+                                </form>
                             </div>
                         </div>
                         <div className="profileInfo">

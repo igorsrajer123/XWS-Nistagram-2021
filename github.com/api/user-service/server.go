@@ -1,12 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"image"
+	"image/jpeg"
+	"io"
 	"mime"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/api/user-service/dto"
+	"github.com/api/user-service/model"
 	"github.com/api/user-service/repository"
 	"github.com/gorilla/mux"
 )
@@ -301,4 +308,149 @@ func (userServer *UserServer) DeclineFollowRequestHandler(w http.ResponseWriter,
 	senderId := vars["senderId"]
 
 	userServer.userRepo.DeclineFollowRequest(currentUserId, senderId)
+}
+
+func (userServer *UserServer) SaveCoverPhoto(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["currentId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	req.ParseMultipartForm(32 << 20)
+	file, handle, err := req.FormFile("file")
+
+	if err != nil {
+		fmt.Println(err)
+		fmt.Fprintf(w, "%v", err)
+		return
+	}
+
+	defer file.Close()
+	absPath, _ := os.Getwd()
+
+	path := filepath.Join(absPath, "files", handle.Filename)
+
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+
+	if err != nil {
+		http.Error(w, "Expected file", http.StatusBadRequest)
+		return
+	}
+
+	_, err = io.Copy(f, file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var savingFile model.UserFile
+	savingFile.Path = path
+	savingFile.Type = "IMAGE"
+
+	err = userServer.userRepo.CreateCoverPhoto(&savingFile, userId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	fileId := userServer.userRepo.FindIdByPath(path)
+	fmt.Println(fileId)
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (userServer *UserServer) SaveProfilePhoto(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["currentId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	req.ParseMultipartForm(32 << 20)
+	file, handle, err := req.FormFile("file")
+
+	if err != nil {
+		fmt.Println(err)
+		fmt.Fprintf(w, "%v", err)
+		return
+	}
+
+	defer file.Close()
+	absPath, _ := os.Getwd()
+
+	path := filepath.Join(absPath, "files", handle.Filename)
+
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+
+	if err != nil {
+		http.Error(w, "Expected file", http.StatusBadRequest)
+		return
+	}
+
+	_, err = io.Copy(f, file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var savingFile model.UserFile
+	savingFile.Path = path
+	savingFile.Type = "IMAGE"
+
+	err = userServer.userRepo.CreateProfilePhoto(&savingFile, userId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	fileId := userServer.userRepo.FindIdByPath(path)
+	fmt.Println(fileId)
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (userServer *UserServer) GetAllUserPhotos(w http.ResponseWriter, req *http.Request) {
+	allPhotos := userServer.userRepo.GetAllUserPhotos()
+
+	RenderJSON(w, allPhotos)
+}
+
+func (userServer *UserServer) GetCoverImageById(w http.ResponseWriter, req *http.Request) {
+
+	vars := mux.Vars(req)
+	imageID := vars["imageID"]
+	u64, err := strconv.ParseUint(imageID, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	image_ID := uint(u64)
+	imagePath := userServer.userRepo.FindFilePathById(image_ID)
+
+	f, err := os.Open(imagePath)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("	***************************")
+	}
+	defer f.Close()
+
+	image, _, err := image.Decode(f)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("	***************************")
+	}
+
+	buffer := new(bytes.Buffer)
+
+	if err := jpeg.Encode(buffer, image, nil); err != nil {
+		fmt.Println("Unable to encode image.")
+		fmt.Println("	***************************")
+	}
+
+	mediaForFrontend := buffer.Bytes()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(mediaForFrontend)
 }

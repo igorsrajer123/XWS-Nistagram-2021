@@ -6,6 +6,7 @@ import ProfilePicture from './../../assets/noPicture.jpg';
 import LoginService from '../../services/loginService';
 import FollowService from './../../services/followService';
 import PreviewFollowRequests from './../../pages/previewFollowRequestsModal/PreviewFollowRequests';
+import UserService from './../../services/userService';
 
 export default class Topbar extends Component {
     constructor(props) {
@@ -21,7 +22,8 @@ export default class Topbar extends Component {
             publicSearch: false,
             requestsIconVisible: false,
             bubbleIconVisible: false,
-            numberOfRequests: 0
+            numberOfRequests: 0,
+            profilePhoto: null
         }
 
         this.goHome = this.goHome.bind(this);
@@ -50,7 +52,6 @@ export default class Topbar extends Component {
                 const requests = await FollowService.getFollowRequests(currentUser.id);
 
                 if(requests.length > 0){
-                    console.log("Ima requestova hehehe!");
                     this.setState({bubbleIconVisible: true});
                     this.setState({requestsIconVisible: true});
                     this.setState({numberOfRequests: requests.length});
@@ -76,6 +77,17 @@ export default class Topbar extends Component {
             this.setState({parentSearchPage: false});
             this.setState({requestsIconVisible: false});
             this.setState({bubbleIconVisible: false});
+
+            const currentUser = await LoginService.getCurrentUser();
+            if(currentUser != null){
+                const data = await UserService.getUserProfilePhoto(currentUser.profileImageId);
+                if(data == null)
+                    this.setState({profilePhoto: ProfilePicture});
+                else
+                this.setState({profilePhoto: data});
+            }else{
+                window.location.href = "/";
+            }
         }
     }
     
@@ -103,7 +115,7 @@ export default class Topbar extends Component {
                                 <span className="topbarIconBadge" style={{visibility: this.state.bubbleIconVisible ? 'visible' : 'hidden'}}>{this.state.numberOfRequests}</span>
                         </div>
                         <button className="topbarLogout" style={{visibility: this.state.publicSearch ? 'hidden' : 'visible'}} onClick={this.logoutClick}>Log Out</button>
-                        <img src={ProfilePicture} onClick={this.goToMyProfile} style={{visibility: this.state.parentUserProfile || this.state.parentSearchPage ? 'hidden' : 'visible'}} alt="" className="topbarImg"/>
+                        <img src={this.state.profilePhoto} onClick={this.goToMyProfile} style={{visibility: this.state.parentUserProfile || this.state.parentSearchPage ? 'hidden' : 'visible'}} alt="" className="topbarImg"/>
                         <PreviewFollowRequests ref={this.child} />
                     </div>
                 </div>

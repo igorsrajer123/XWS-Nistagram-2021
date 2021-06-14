@@ -42,6 +42,11 @@ func main() {
 	router.HandleFunc("/getUserFollowRequests/{currentId}", server.GetUserFollowRequestsHandler).Methods("GET")
 	router.HandleFunc("/acceptRequest/{currentId}/{senderId}", server.AcceptFollowRequestHandler).Methods("PUT")
 	router.HandleFunc("/declineRequest/{currentId}/{senderId}", server.DeclineFollowRequestHandler).Methods("PUT")
+	router.HandleFunc("/saveCoverPhoto/{currentId}", server.SaveCoverPhoto).Methods("POST")
+	router.HandleFunc("/getUserPhotos", server.GetAllUserPhotos).Methods("GET")
+	router.HandleFunc("/getCoverPhoto/{imageID}", server.GetCoverImageById).Methods("GET")
+	router.HandleFunc("/saveProfilePhoto/{currentId}", server.SaveProfilePhoto).Methods("POST")
+	router.HandleFunc("/getProfilePhoto/{imageID}", server.GetCoverImageById).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

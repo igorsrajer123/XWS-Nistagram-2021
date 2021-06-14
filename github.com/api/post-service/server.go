@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"mime"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
+	"github.com/api/post-service/model"
 	"github.com/api/post-service/repository"
 	"github.com/gorilla/mux"
 )
@@ -52,7 +56,42 @@ func (postServer *PostServer) CreateStatusPostHandler(w http.ResponseWriter, req
 		return
 	}
 
-	id := postServer.postRepo.CreateStatusPost(post.Description, post.Tags, post.Location, post.UserRefer)
+	//---------------------------------------------
+	req.ParseMultipartForm(32 << 20)
+	file, handle, err := req.FormFile("file")
+
+	if err != nil {
+		fmt.Println(err)
+		fmt.Fprintf(w, "%v", err)
+		return
+	}
+	defer file.Close()
+	absPath, err := os.Getwd()
+
+	path := filepath.Join(absPath, "files", handle.Filename)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+
+	if err != nil {
+		http.Error(w, "Expected file", http.StatusBadRequest)
+		return
+	}
+	io.Copy(f, file)
+
+	var savingFile model.File
+	savingFile.Path = path
+	savingFile.Type = "IMAGE"
+
+	err = postServer.postRepo.CreateFile(&savingFile)
+
+	if err != nil {
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	fileId := postServer.postRepo.FindFileIdByPath(path)
+
+	//----------------------------------------------
+	id := postServer.postRepo.CreateStatusPost(post.Description, post.Tags, post.Location, post.UserRefer, fileId)
 	RenderJSON(w, id)
 }
 

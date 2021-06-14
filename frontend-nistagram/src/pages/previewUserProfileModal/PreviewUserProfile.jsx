@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 import './previewUserProfile.css';
 import ProfilePicture from './../../assets/noPicture.jpg';
-import CoverPicture from './../../assets/2.jpg';
+import CoverPicture from './../../assets/wallpaper.webp';
 import Sidebar from './../../sharedComponents/sidebar/Sidebar';  
 import UserService from '../../services/userService';
 import FollowService from '../../services/followService';
 import LoginService from '../../services/loginService';
 import Feed from './../../sharedComponents/feed/Feed';
+import Post from './../../sharedComponents/post/Post';
+import PostService from './../../services/postService';
 
 export default class PreviewUserProfile extends Component {
     constructor(props){
@@ -32,7 +34,10 @@ export default class PreviewUserProfile extends Component {
             followingSelectedUser: false,
             followButtonText: "Follow",
             followRequestSent: false,
-            showFeedAndSidebar: true
+            showFeedAndSidebar: true,
+            profilePhoto: "",
+            coverPhoto: "",
+            userPosts: null
         }
 
         this.toggleModal = this.toggleModal.bind(this);
@@ -88,6 +93,22 @@ export default class PreviewUserProfile extends Component {
             this.setState({privateProfile: myUser.privateProfile});
             this.setState({showFeedAndSidebar: true});
 
+            const userPosts = await PostService.getUserPosts(myUser.id);
+            console.log(userPosts);
+            this.setState({userPosts: userPosts});
+
+            const data = await UserService.getUserCoverPhoto(myUser.coverImageId);
+            if(data == null)
+                this.setState({coverPhoto: CoverPicture});
+            else
+                this.setState({coverPhoto: data});
+
+            const data2 = await UserService.getUserProfilePhoto(myUser.profileImageId);
+            if(data2 == null)
+                this.setState({profilePhoto: ProfilePicture});
+            else
+                this.setState({profilePhoto: data2});
+
             const followings = await FollowService.getUserFollowings(this.props.userId)
             if(followings == null){
                 this.setState({numberOfFollowings: 0});
@@ -102,7 +123,6 @@ export default class PreviewUserProfile extends Component {
                 this.setState({numberOfFollowers: followers.length});
             }
 
-            console.log(this.state.privateProfile)
             const queryParams = new URLSearchParams(window.location.search);
             const publ = queryParams.get('public');
 
@@ -160,14 +180,28 @@ export default class PreviewUserProfile extends Component {
         }
     }
 
+    UserPosts = () => {
+        if(this.state.userPosts != null){
+            return this.state.userPosts.map(post =>
+                <div className="userPost" key={post.id}>
+                    <Post key={post.id} post={post} parentComponent="PreviewUserProfile" />
+                </div>
+            );
+        }else {
+            return <div>
+                        
+                    </div>
+        }
+    }
+
     render() {
         return (
             <Modal isOpen={this.state.isOpen} onRequestClose={this.toggleModal} className="previewUserModal">
                 <div className="previewProfile">
                     <div className="previewProfileTop">
                         <div className="previewProfileCover">
-                            <img src={CoverPicture} alt="" className="previewCoverImage"/>
-                            <img src={ProfilePicture} alt="" className="previewProfileImage"/>
+                            <img src={this.state.coverPhoto} alt="" className="previewCoverImage"/>
+                            <img src={this.state.profilePhoto} alt="" className="previewProfileImage"/>
                         </div>
                     </div>
                     <div className="previewProfileCenter">
@@ -189,7 +223,7 @@ export default class PreviewUserProfile extends Component {
                         <div className="previewFeed">
                             <div className="privateProfile" style={{display: this.state.showFeedAndSidebar ? 'none' : 'block'}}>This Profile is Private!</div>
                             <div className="previewPosts" style={{display: this.state.showFeedAndSidebar ? 'block' : 'none'}}>
-                                <Feed parentComponent="previewUser" userId={this.props.userId} />
+                                <this.UserPosts />
                             </div>
                         </div>                   
                     </div>

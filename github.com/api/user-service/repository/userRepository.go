@@ -35,6 +35,7 @@ func New() (*UserRepository, error) {
 	userRepo.db = db
 	userRepo.db.AutoMigrate(&model.User{})
 	userRepo.db.AutoMigrate(&model.FollowRequest{})
+	userRepo.db.AutoMigrate(&model.UserFile{})
 
 	return userRepo, nil
 }
@@ -295,4 +296,51 @@ func (userRepo *UserRepository) DeclineFollowRequest(currentUserId string, sende
 	userRepo.db.Where("sent_to_id = ? AND status = ? AND sent_by_id = ?", currentUserId, "PENDING", senderId).First(&request)
 	request.Status = "DECLINED"
 	userRepo.db.Save(&request)
+}
+
+func (userRepo *UserRepository) CreateCoverPhoto(file *model.UserFile, userId string) error {
+	userRepo.db.Create(file)
+
+	var user model.User
+	intVal, _ := strconv.Atoi(userId)
+	userRepo.db.Where("id = ?", intVal).First(&user)
+
+	user.CoverImageID = file.ID
+	userRepo.db.Save(&user)
+	fmt.Println(user.CoverImageID)
+
+	return nil
+}
+
+func (userRepo *UserRepository) CreateProfilePhoto(file *model.UserFile, userId string) error {
+	userRepo.db.Create(file)
+
+	var user model.User
+	intVal, _ := strconv.Atoi(userId)
+	userRepo.db.Where("id = ?", intVal).First(&user)
+
+	user.ProfileImageID = file.ID
+	userRepo.db.Save(&user)
+	fmt.Println(user.ProfileImageID)
+
+	return nil
+}
+
+func (userRepo *UserRepository) FindIdByPath(path string) uint {
+	var file model.UserFile
+	userRepo.db.Where("path = ? ", path).First(&file)
+	return file.ID
+}
+
+func (userRepo *UserRepository) FindFilePathById(imageID uint) string {
+	var file model.UserFile
+	userRepo.db.Where("id = ? ", imageID).First(&file)
+	return file.Path
+}
+
+func (userRepo *UserRepository) GetAllUserPhotos() []model.UserFile {
+	var coverPhotos []model.UserFile
+	userRepo.db.Find(&coverPhotos)
+
+	return coverPhotos
 }

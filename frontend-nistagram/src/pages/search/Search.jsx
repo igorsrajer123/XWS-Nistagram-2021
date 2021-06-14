@@ -5,6 +5,8 @@ import ProfilePicture from './../../assets/noPicture.jpg';
 import Topbar from './../../sharedComponents/topbar/Topbar';
 import PreviewUserProfile from './../../pages/previewUserProfileModal/PreviewUserProfile';
 import Post from './../../sharedComponents/post/Post';
+import UserService from './../../services/userService';
+import { thisExpression } from '@babel/types';
 
 export default class Search extends Component {
     constructor() {
@@ -18,7 +20,8 @@ export default class Search extends Component {
             searchedUsers: [],
             searchedUserId: 0,
             searchedPosts: [],
-            noResultsFound: false
+            noResultsFound: false,
+            profilePhoto: null,
         }
 
         this.userNameClick = this.userNameClick.bind(this);
@@ -63,7 +66,7 @@ export default class Search extends Component {
         }else{
             return this.state.searchedUsers.map(user =>
                 <div className="searchUser" key={user.id}>
-                    <img src={ProfilePicture}  alt="" className="searchUserImage"/>
+                    <img src={this.state.profilePhoto}  alt="" className="searchUserImage"/>
                     <span className="searchUserName" onClick={() => this.userNameClick(user.id)}><b>{user.firstName} {user.lastName}</b> ({user.location})</span>
                 </div>
                 );

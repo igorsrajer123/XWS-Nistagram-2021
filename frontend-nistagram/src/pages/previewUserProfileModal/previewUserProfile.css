@@ -126,6 +126,16 @@
     margin-top: 10px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.previewPosts{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10%;
 }
 
 .privateProfile{

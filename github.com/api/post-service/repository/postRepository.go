@@ -34,6 +34,7 @@ func New() (*PostRepository, error) {
 	}
 	postRepo.db = db
 	postRepo.db.AutoMigrate(&model.Post{})
+	postRepo.db.AutoMigrate(&model.File{})
 
 	return postRepo, nil
 }
@@ -56,7 +57,7 @@ func (postRepo *PostRepository) GetAllPosts() []model.Post {
 }
 
 func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.StringArray, location string,
-	userRefer int) int {
+	userRefer int, fileId uint) int {
 
 	post := model.Post{
 		Description: description,
@@ -65,7 +66,8 @@ func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.Str
 		Published:   time.Now(),
 		Type:        "STATUS",
 		Tags:        tags,
-		Likes:       0}
+		Likes:       0,
+		ImageID:     fileId}
 
 	postRepo.db.Create(&post)
 	return post.ID
@@ -117,4 +119,22 @@ func (postRepo *PostRepository) SearchPublicPosts(searchParameter string) []mode
 		}
 	}
 	return myPosts
+}
+
+//working with files
+func (postRepo *PostRepository) CreateFile(file *model.File) error {
+	postRepo.db.Create(file)
+	return nil
+}
+
+func (postRepo *PostRepository) FindFileIdByPath(path string) uint {
+	var file model.File
+	postRepo.db.Where("path = ?", path).First(&file)
+	return file.ID
+}
+
+func (postRepo *PostRepository) FindFilePathById(imageID uint) string {
+	var file model.File
+	postRepo.db.Where("id = ? ", imageID).First(&file)
+	return file.Path
 }
