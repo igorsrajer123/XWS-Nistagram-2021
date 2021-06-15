@@ -7,6 +7,7 @@ import LikeIcon from './../../assets/like.png';
 import UserService from './../../services/userService';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import PostService from './../../services/postService';
+import LoginService from './../../services/loginService';
 
 export default class Post extends Component {
     constructor(props) {
@@ -23,11 +24,23 @@ export default class Post extends Component {
             likes: 0,
             hideBottomPart: false,
             profilePhoto: "",
+            currentUserPhoto: "",
             postPhotoId: 0,
-            postPhoto: null
+            postPhoto: null,
+            postComments: null,
+            numberOfComments: 0,
+            showCommentDiv: false,
+            usersCommented: [],
+            commentText: "",
+            commentButtonVisible: false,
+            currentUserId: 0
         };
     
         this.likeHandler = this.likeHandler.bind(this);
+        this.toggleComments = this.toggleComments.bind(this);
+        this.getUsers = this.getUsers.bind(this);
+        this.commentTextChange = this.commentTextChange.bind(this);
+        this.postComment = this.postComment.bind(this);
     }
 
     async likeHandler() {
@@ -39,6 +52,21 @@ export default class Post extends Component {
         }else{
             await PostService.dislikePost(this.props.post.id);
         }
+    }
+
+    toggleComments = () => this.setState({showCommentDiv: this.state.showCommentDiv ? false : true});
+
+    commentTextChange = (event) => this.setState({commentText : event.target.value});
+
+    async postComment() {
+        const object = {
+            text: this.state.commentText,
+            postID: this.props.post.id,
+            userID: this.state.currentUserId
+        };
+
+        await PostService.postNewComment(object);
+        window.location.reload();
     }
 
     async componentDidMount() {
@@ -71,6 +99,39 @@ export default class Post extends Component {
             this.setState({postPhotoId: this.props.post.imageID});
             this.setState({postPhoto: data});
         }
+
+        const currentUser = await LoginService.getCurrentUser()
+        if(currentUser != null){
+            const currentUserImg = await UserService.getUserProfilePhoto(currentUser.profileImageId)
+            this.setState({currentUserPhoto: currentUserImg});
+            this.setState({currentUserId: currentUser.id});
+        }
+
+        const comments = await PostService.getPostComments(this.props.post.id);
+        if(comments != null){
+            this.setState({postComments: comments});
+            this.setState({numberOfComments: comments.length});
+        }
+
+        await this.getUsers();
+    }
+
+    async getUsers(){
+        const users = await UserService.getAllUsers();
+        this.setState({usersCommented: users});
+    }
+
+    RenderUserName = props => {
+        if(this.state.usersCommented.length > 0){
+            const users = this.state.usersCommented;
+            for(var i = 0; i < users.length; ++i){
+                if(users[i].id == props.userId){
+                    return <div className="commentUserName"><b>{users[i].firstName} {users[i].lastName}</b></div>
+                }
+            }
+        }
+    
+        return <div></div>
     }
 
     render() {
@@ -89,8 +150,8 @@ export default class Post extends Component {
                     </div>
                     <div className="postCenter">
                         <span className="postText">{this.state.postDescription}</span><br/><br/>
-                        <LocationOnIcon  htmlColor="green"/>
-                        <span className="postLocation">{this.state.postLocation}</span><br/><br/>
+                        <LocationOnIcon  htmlColor="green" style={{display: this.state.postLocation == "" ? 'none' : ''}}/>
+                        <span className="postLocation" style={{display: this.state.postLocation == "" ? 'none' : ''}}>{this.state.postLocation}</span><br/><br/>
                         {this.state.postTags.map(t => 
                             <b><span key={t} style={{color: 'dodgerblue'}} className="postTag">{t}</span></b>
                         )}
@@ -102,7 +163,26 @@ export default class Post extends Component {
                             <span className="postLikeCounter">{this.state.likes} people likes this!</span>
                         </div>
                         <div className="postBottomRight" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible'}}>
-                            <span className="postCommentText">0 comments</span>
+                            <span className="postCommentText" onClick={this.toggleComments}>{this.state.numberOfComments} comments</span>
+                        </div>
+                    </div>
+                    <div className="postComments" style={{display: this.state.showCommentDiv ? 'block' : 'none'}}>
+                        <hr/>
+                        <span><b>Leave a Comment...</b></span><br/>
+                        <div className="newComment">
+                            <img className="postProfileImg" src={this.state.currentUserPhoto} alt="" />
+                            <div className="helperDivComment">
+                                <input type="text" className="newCommentText" placeholder="Comment..." onChange={this.commentTextChange} />
+                                <button className="comment" onClick={this.postComment} style={{display: this.state.commentText == "" ? 'none' : ''}}>Comment!</button>
+                            </div>
+                        </div>
+                        <div style={{display: this.state.postComments == null ? 'none' : 'flex',flexDirection: 'column'}}>
+                        {this.state.postComments == null ? '' : this.state.postComments.map(c => 
+                            <div className="oneComment"style={{margin: '5px'}}>
+                                <this.RenderUserName userId={c.userID} />
+                                <span key={c.id} className="postComment">{c.text}</span>
+                            </div>
+                        )}
                         </div>
                     </div>
                 </div>

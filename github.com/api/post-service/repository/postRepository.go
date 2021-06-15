@@ -35,6 +35,7 @@ func New() (*PostRepository, error) {
 	postRepo.db = db
 	postRepo.db.AutoMigrate(&model.Post{})
 	postRepo.db.AutoMigrate(&model.File{})
+	postRepo.db.AutoMigrate(&model.Comment{})
 
 	return postRepo, nil
 }
@@ -152,4 +153,29 @@ func (postRepo *PostRepository) GetAllPostPhotos() []model.File {
 	postRepo.db.Find(&postPhotos)
 
 	return postPhotos
+}
+
+func (postRepo *PostRepository) CreateNewComment(currentUserId int, postId int, text string) int {
+	newComment := model.Comment{
+		PostID: postId,
+		UserID: currentUserId,
+		Text:   text}
+
+	postRepo.db.Create(&newComment)
+
+	return newComment.ID
+}
+
+func (postRepo *PostRepository) GetPostComments(postId int) []model.Comment {
+	var comments []model.Comment
+	postRepo.db.Where("post_id = ?", postId).Find(&comments)
+
+	return comments
+}
+
+func (postRepo *PostRepository) RemoveComment(commentId int) int {
+	comment := model.Comment{}
+	postRepo.db.Where("id = ?", commentId).Delete(&comment)
+
+	return comment.ID
 }

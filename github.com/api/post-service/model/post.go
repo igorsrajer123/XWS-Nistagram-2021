@@ -23,3 +23,10 @@ type File struct {
 	Path string `json:"path"`
 	Type string `json:"type"`
 }
+
+type Comment struct {
+	ID     int    `json:"id"`
+	PostID int    `json:"postID"`
+	UserID int    `json:"userID"`
+	Text   string `json:"text"`
+}

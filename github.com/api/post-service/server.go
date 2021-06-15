@@ -6,12 +6,14 @@ import (
 	"image"
 	"image/jpeg"
 	"io"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 
+	"github.com/api/post-service/dto"
 	"github.com/api/post-service/model"
 	"github.com/api/post-service/repository"
 	"github.com/gorilla/mux"
@@ -194,4 +196,55 @@ func (postServer *PostServer) GetPostPictureHandler(w http.ResponseWriter, req *
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(mediaForFrontend)
+}
+
+func (postServer *PostServer) CreateNewCommentHandler(w http.ResponseWriter, req *http.Request) {
+	contentType := req.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		http.Error(w, "expect application/json Content-Type", http.StatusUnsupportedMediaType)
+		fmt.Println("AAAAAAAAA")
+		return
+	}
+
+	comment, err := DecodeComment(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	id := postServer.postRepo.CreateNewComment(comment.UserID, comment.PostID, comment.Text)
+	RenderJSON(w, dto.ResponseId{Id: id})
+}
+
+func (postServer *PostServer) GetPostCommentsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["postId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	postComments := postServer.postRepo.GetPostComments(stringId)
+	if postComments != nil {
+		RenderJSON(w, postComments)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func (postServer *PostServer) RemoveCommentHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["commentId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	commentId := postServer.postRepo.RemoveComment(stringId)
+	RenderJSON(w, commentId)
 }

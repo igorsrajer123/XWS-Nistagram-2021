@@ -93,11 +93,33 @@ async function getPostPhoto(imageId){
     }
 }
 
+async function getPostComments(postId){
+    const url = "http://localhost:8000/api/post/getPostComments/" + postId;
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    return data;
+}
+
+async function postNewComment(comment){
+    const url = "http://localhost:8000/api/post/addComment";
+    const response = await fetch(url, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json'
+                },
+        body: JSON.stringify(comment)
+    }).catch(e => console.error(e));
+
+}
+
 export default{
     getUserPosts,
     createStatusPost,
     likePost,
     dislikePost,
     getHomepagePosts,
-    getPostPhoto
+    getPostPhoto,
+    getPostComments,
+    postNewComment
 }

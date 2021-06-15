@@ -35,6 +35,10 @@ func main() {
 	router.HandleFunc("/getAllPostPhotos", server.GetAllPostPhotosHandler).Methods("GET")
 	router.HandleFunc("/getPostPhoto/{imageID}", server.GetPostPictureHandler).Methods("GET")
 
+	router.HandleFunc("/addComment", server.CreateNewCommentHandler).Methods("POST")
+	router.HandleFunc("/getPostComments/{postId}", server.GetPostCommentsHandler).Methods("GET")
+	router.HandleFunc("/removeComment/{commentId}", server.RemoveCommentHandler).Methods("DELETE")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("Post server starting...")

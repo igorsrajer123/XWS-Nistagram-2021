@@ -16,6 +16,14 @@ async function editUserInfo(user){
     return data;
 }
 
+async function getAllUsers(){
+    const url = "http://localhost:8000/api/user/getAllUsers";  
+    const response = await fetch(url);
+
+    const data = await response.json();
+    return data;
+}
+
 async function changePassword(user){
     const url = "http://localhost:8000/api/user/changePassword";  
     const response = await fetch(url, {
@@ -80,5 +88,6 @@ export default {
     changePassword,
     getUserById,
     getUserCoverPhoto,
-    getUserProfilePhoto
+    getUserProfilePhoto,
+    getAllUsers
 }

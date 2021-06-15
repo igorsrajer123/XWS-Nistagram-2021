@@ -19,8 +19,8 @@
 }
 
 .postProfileImg{
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -95,4 +95,71 @@
 .postLocation{
     color: green;
     font-weight: bold;
+}
+
+.postComments{
+    margin-left: 10px;
+}
+
+.newComment{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.helperDivComment{
+    width: 100%;
+}
+
+.newCommentText{
+    margin-left: 10px;
+    height: 40px;
+    width: 50%;
+    border-radius: 15%;
+    border: none;
+    background-color: dodgerblue;
+    color: white;
+}
+
+.newCommentText:focus{
+    outline: none;
+}
+
+.newCommentText::placeholder{
+    color: white;
+}
+
+.comment{
+    margin-left: 10px;
+    height: 40px;
+    border-radius: 20%;
+    border-style: none;
+    background-color: mediumslateblue;
+    transition: 0.3s;
+    color: white;
+    font-weight: bold;
+}
+
+.comment:hover{
+    background-color: dodgerblue;
+}
+
+.oneComment{
+    font-size: 17px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    border-style: dotted;
+    border-color: dodgerblue;
+    background-color: mediumslateblue;
+    padding: 10px;
+}
+
+.commentUserName{
+    margin-bottom: 10px;
+    color: white;
+}
+
+.commentUserName:hover{
+    cursor: pointer;
+    text-decoration: underline;
 }
