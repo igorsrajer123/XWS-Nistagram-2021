@@ -3,7 +3,7 @@ module github.com/api/authentication-service
 go 1.16
 
 require (
-	github.com/api/user-service v1.0.0
+	github.com/api/user-service v0.0.0-00010101000000-000000000000
 	github.com/form3tech-oss/jwt-go v3.2.3+incompatible
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0

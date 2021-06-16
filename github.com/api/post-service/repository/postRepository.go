@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -183,19 +184,25 @@ func (postRepo *PostRepository) RemoveComment(commentId int) int {
 func (postRepo *PostRepository) AddToFavourites(postId string, userId string) {
 	user := &userModel.User{}
 	postRepo.db.Where("id = ?", userId).First(&user)
-	fmt.Println(user)
 
 	post := &model.Post{}
 	postRepo.db.Where("id = ?", postId).First(&post)
-	fmt.Println(post)
 
-	fmt.Println(len(user.FavouritePosts))
 	user.FavouritePosts = append(user.FavouritePosts, int64(post.ID))
-	fmt.Println(len(user.FavouritePosts))
+	postRepo.db.Save(&user)
 }
 
 func (postRepo *PostRepository) RemoveFromFavourites(postId string, userId string) {
+	user := &userModel.User{}
+	postRepo.db.Where("id = ?", userId).First(&user)
 
+	postInt, _ := strconv.Atoi(postId)
+	for i, post := range user.FavouritePosts {
+		if post == int64(postInt) {
+			user.FavouritePosts = append(user.FavouritePosts[:i], user.FavouritePosts[i+1:]...)
+			postRepo.db.Save(&user)
+		}
+	}
 }
 
 func (postRepo *PostRepository) GetUserFavourites(userId string) pq.Int64Array {

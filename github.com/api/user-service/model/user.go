@@ -20,6 +20,7 @@ type User struct {
 	CoverImageID   uint          `json:"coverImageId"`
 	ProfileImageID uint          `json:"profileImageId"`
 	FavouritePosts pq.Int64Array `json:"favouritePosts" gorm:"type:integer[]"`
+	CloseFriends   pq.Int64Array `json:"closeFriends" gorm:"type:integer[]"`
 }
 
 type FollowRequest struct {

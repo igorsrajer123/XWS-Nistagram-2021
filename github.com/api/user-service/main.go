@@ -48,6 +48,10 @@ func main() {
 	router.HandleFunc("/saveProfilePhoto/{currentId}", server.SaveProfilePhoto).Methods("POST")
 	router.HandleFunc("/getProfilePhoto/{imageID}", server.GetCoverImageById).Methods("GET")
 
+	router.HandleFunc("/addCloseFriend/{userId}/{currentUserId}", server.AddToCloseFriendsHandler).Methods("PUT")
+	router.HandleFunc("/removeCloseFriend/{userId}/{currentUserId}", server.RemoveFromCloseFriendsHandler).Methods("PUT")
+	router.HandleFunc("/getCloseFriends/{userId}", server.GetUserCloseFriendsHandler).Methods("GET")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("User server starting...")

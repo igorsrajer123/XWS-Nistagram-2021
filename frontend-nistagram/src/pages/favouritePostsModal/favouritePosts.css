@@ -1,0 +1,25 @@
+.favouritePostsModal{
+    position: absolute;
+    top: 10%;
+    left: 12%;
+    background-color: whitesmoke;
+    min-height: 50%;
+    max-height: 80%;
+    overflow-y: auto;
+    width: 70%;
+    overflow: 'auto';
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.favouritesWrapper{
+    margin-left: 25%;
+}
+
+.noFavouritePosts{
+    color: red;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+}

@@ -43,6 +43,8 @@ export default class Post extends Component {
         this.getUsers = this.getUsers.bind(this);
         this.commentTextChange = this.commentTextChange.bind(this);
         this.postComment = this.postComment.bind(this);
+        this.addToFavourites = this.addToFavourites.bind(this);
+        this.removeFromFavourites = this.removeFromFavourites.bind(this);
     }
 
     async likeHandler() {
@@ -121,6 +123,16 @@ export default class Post extends Component {
         }else{
             this.setState({userProfile: false});
         }
+
+        if(currentUser != null){
+            const favouritePosts = await PostService.getFavouritePosts(currentUser.id);
+            if(favouritePosts != null && favouritePosts.length > 0)
+                for(var i = 0; i < favouritePosts.length; i++)
+                    if(favouritePosts[i] == this.props.post.id){
+                        this.setState({favouritePost: true});
+                        break;
+                    }
+        }
     }
 
     async getUsers(){
@@ -141,6 +153,22 @@ export default class Post extends Component {
         return <div></div>
     }
 
+    async addToFavourites(){
+        const currentUser = await LoginService.getCurrentUser()
+        if(currentUser != null){
+            await PostService.addToFavourites(this.props.post.id, currentUser.id);
+            this.setState({favouritePost: true});
+        }
+    }
+
+    async removeFromFavourites(){
+        const currentUser = await LoginService.getCurrentUser()
+        if(currentUser != null){
+            await PostService.removeFromFavourites(this.props.post.id, currentUser.id);
+            this.setState({favouritePost: false});
+        }
+    }
+
     render() {
         return (
             <div className="post">
@@ -152,7 +180,9 @@ export default class Post extends Component {
                             <span className="postDate">{this.state.postDate}</span>
                         </div>
                         <div className="postTopRight">
-                            <input class="star" type="checkbox" style={{display: this.state.userProfile ? 'flex' : 'none'}} checked={this.state.favouritePost ? 'true' : 'false'} />
+                            <input class="star" type="checkbox" style={{display: this.state.userProfile ? 'flex' : 'none'}}
+                                                                checked={this.state.favouritePost ? '' : 'false'} 
+                                                                onClick={this.state.favouritePost ? this.removeFromFavourites : this.addToFavourites} />
                             <MoreVertIcon />
                         </div>
                     </div>

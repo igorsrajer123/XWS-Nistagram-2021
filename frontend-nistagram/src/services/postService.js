@@ -98,7 +98,6 @@ async function getPostComments(postId){
     const response = await fetch(url);
 
     const data = await response.json();
-
     return data;
 }
 
@@ -110,7 +109,30 @@ async function postNewComment(comment){
                 },
         body: JSON.stringify(comment)
     }).catch(e => console.error(e));
+}
 
+async function getFavouritePosts(userId){
+    const url = "http://localhost:8000/api/post/getUserFavourites/" + userId;
+    const response = await fetch(url);
+
+    const data = await response.json();
+    return data;
+}
+
+async function addToFavourites(postId, userId){
+    const url = "http://localhost:8000/api/post/addToFavourites/" + postId + "/" + userId;
+    await fetch(url, {
+        method: "PUT"
+    });
+    window.location.reload();
+}
+
+async function removeFromFavourites(postId, userId){
+    const url = "http://localhost:8000/api/post/removeFromFavourites/" + postId + "/" + userId;
+    await fetch(url, {
+        method: "PUT"
+    });
+    window.location.reload();
 }
 
 export default{
@@ -121,5 +143,8 @@ export default{
     getHomepagePosts,
     getPostPhoto,
     getPostComments,
-    postNewComment
+    postNewComment,
+    getFavouritePosts,
+    addToFavourites,
+    removeFromFavourites
 }

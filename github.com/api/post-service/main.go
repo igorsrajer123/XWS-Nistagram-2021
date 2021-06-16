@@ -40,6 +40,7 @@ func main() {
 	router.HandleFunc("/removeComment/{commentId}", server.RemoveCommentHandler).Methods("DELETE")
 
 	router.HandleFunc("/addToFavourites/{postId}/{userId}", server.AddToFavouritesHandler).Methods("PUT")
+	router.HandleFunc("/removeFromFavourites/{postId}/{userId}", server.RemoveFromFavouritesHandler).Methods("PUT")
 	router.HandleFunc("/getUserFavourites/{userId}", server.GetUserFavouritesHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}

@@ -8,6 +8,7 @@ import LoginService from './../../services/loginService';
 import Sidebar from './../../sharedComponents/sidebar/Sidebar';
 import FollowService from './../../services/followService';
 import UserService from './../../services/userService';
+import Rightbar from './../../sharedComponents/rightbar/Rightbar';
 
 export default class UserProfile extends Component {
     constructor() {
@@ -100,6 +101,7 @@ export default class UserProfile extends Component {
                         <div className="profileRightBottom">
                             <Sidebar parentComponent={'userProfile'}/>
                             <Feed parentComponent={'userProfile'} />
+                            <Rightbar />
                         </div>
                     </div>
                 </div>

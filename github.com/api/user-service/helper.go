@@ -46,6 +46,7 @@ func FromUserToUserDto(user model.User) dto.UserDto {
 	userDto.CoverImageID = user.CoverImageID
 	userDto.ProfileImageID = user.ProfileImageID
 	userDto.FavouritePosts = user.FavouritePosts
+	userDto.CloseFriends = user.CloseFriends
 
 	return userDto
 }

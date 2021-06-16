@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/api/user-service/model"
+	"github.com/lib/pq"
 )
 
 type UserRepository struct {
@@ -341,4 +342,35 @@ func (userRepo *UserRepository) GetAllUserPhotos() []model.UserFile {
 	userRepo.db.Find(&coverPhotos)
 
 	return coverPhotos
+}
+
+func (userRepo *UserRepository) AddToCloseFriends(userId string, currentUserId string) {
+	currentUser := &model.User{}
+	userRepo.db.Where("id = ?", currentUserId).First(&currentUser)
+
+	user := &model.User{}
+	userRepo.db.Where("id = ?", userId).First(&user)
+
+	currentUser.CloseFriends = append(currentUser.CloseFriends, int64(user.ID))
+	userRepo.db.Save(&currentUser)
+}
+
+func (userRepo *UserRepository) RemoveFromCloseFriends(userId string, currentUserId string) {
+	currentUser := &model.User{}
+	userRepo.db.Where("id = ?", currentUserId).First(&currentUser)
+
+	userInt, _ := strconv.Atoi(userId)
+	for i, closeFriend := range currentUser.CloseFriends {
+		if closeFriend == int64(userInt) {
+			currentUser.CloseFriends = append(currentUser.CloseFriends[:i], currentUser.CloseFriends[i+1:]...)
+			userRepo.db.Save(&currentUser)
+		}
+	}
+}
+
+func (userRepo *UserRepository) GetUserCloseFriends(currentUserId string) pq.Int64Array {
+	var user model.User
+	userRepo.db.Where("id = ?", currentUserId).First(&user)
+
+	return user.CloseFriends
 }

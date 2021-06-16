@@ -453,3 +453,48 @@ func (userServer *UserServer) GetCoverImageById(w http.ResponseWriter, req *http
 	w.WriteHeader(http.StatusOK)
 	w.Write(mediaForFrontend)
 }
+
+func (userServer *UserServer) AddToCloseFriendsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	vars2 := mux.Vars(req)
+	currentUserId, ok := vars2["currentUserId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	userServer.userRepo.AddToCloseFriends(userId, currentUserId)
+	RenderJSON(w, userId)
+}
+
+func (userServer *UserServer) RemoveFromCloseFriendsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	vars2 := mux.Vars(req)
+	currentUserId, ok := vars2["currentUserId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	userServer.userRepo.RemoveFromCloseFriends(userId, currentUserId)
+	RenderJSON(w, userId)
+}
+
+func (userServer *UserServer) GetUserCloseFriendsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	closeFriends := userServer.userRepo.GetUserCloseFriends(userId)
+	RenderJSON(w, closeFriends)
+}
