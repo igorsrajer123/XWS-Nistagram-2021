@@ -49,7 +49,7 @@ export default class FavouritePosts extends Component {
                                 <div>
                                     <Post key={p.id} post={p} parentComponent="FavouritePosts" />
                                 </div>
-                            ))}
+                    ))}
                     <span style={{display: this.state.favouritePosts.length > 0 ? 'none' : 'block'}}className="noFavouritePosts">No Favourite Posts Chosen Yet!</span>
                 </div>
             </Modal>

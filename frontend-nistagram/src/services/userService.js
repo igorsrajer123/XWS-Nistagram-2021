@@ -83,11 +83,39 @@ async function getUserProfilePhoto(profileImageId){
     }
 }
 
+async function getUserCloseFriends(userId){
+    const url = "http://localhost:8000/api/user/getCloseFriends/" + userId;
+    const response = await fetch(url);
+
+    const data = await response.json();
+    return data;
+}
+
+async function removeCloseFriend(userId, currentUserId){
+    const url = "http://localhost:8000/api/user/removeCloseFriend/" + userId + "/" + currentUserId;
+    await fetch(url, {
+        method: "PUT"
+    });
+    window.location.reload();
+}
+
+async function addCloseFriend(userId, currentUserId){
+    const url = "http://localhost:8000/api/user/addCloseFriend/" + userId + "/" + currentUserId;
+    await fetch(url, {
+        method: "PUT"
+    });
+    window.location.reload();
+}
+
+
 export default {
     editUserInfo,
     changePassword,
     getUserById,
     getUserCoverPhoto,
     getUserProfilePhoto,
-    getAllUsers
+    getAllUsers,
+    getUserCloseFriends,
+    removeCloseFriend,
+    addCloseFriend
 }

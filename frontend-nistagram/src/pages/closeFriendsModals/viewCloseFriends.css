@@ -1,0 +1,64 @@
+.viewCloseFriendsModal{
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    background-color: whitesmoke;
+    min-height: 40%;
+    max-height: 70%;
+    overflow-y: auto;
+    width: 60%;
+    overflow: 'auto';
+    outline: none;
+    border-style: ridge;
+    border-color: dodgerblue;
+}
+
+.viewCloseFriendsWrapper{
+    text-align: center;
+}
+
+.removeItem{
+    margin-left: 5%;
+    height: 60%;
+    font-weight: bold;
+    color: white;
+    background-color: red;
+    border-style: none;
+    transition: 0.5s;
+
+}
+
+.removeItem:hover{
+    color: red;
+    background-color: white;
+    border-style: dotted;
+    border-color: red;
+    cursor: pointer;
+}
+
+.oneCloseFriend{
+    display: flex;
+    width: 80%;
+    height: 50px;
+    margin-top: 2%;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    justify-content: center;
+    align-items: center;
+    cursor: auto;
+}
+
+.noCloseFriends{
+    color: red;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+    margin-top: 20%;
+}
+
+.viewCloseFriendsHeader{
+    font-weight: bold;
+    font-size: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
