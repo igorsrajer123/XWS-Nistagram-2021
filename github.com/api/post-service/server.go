@@ -248,3 +248,31 @@ func (postServer *PostServer) RemoveCommentHandler(w http.ResponseWriter, req *h
 	commentId := postServer.postRepo.RemoveComment(stringId)
 	RenderJSON(w, commentId)
 }
+
+func (postServer *PostServer) AddToFavouritesHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	postId, ok := vars["postId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	vars2 := mux.Vars(req)
+	userId, ok := vars2["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	postServer.postRepo.AddToFavourites(postId, userId)
+	RenderJSON(w, postId)
+}
+
+func (postServer *PostServer) GetUserFavouritesHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	posts := postServer.postRepo.GetUserFavourites(userId)
+	RenderJSON(w, posts)
+}

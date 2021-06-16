@@ -39,6 +39,9 @@ func main() {
 	router.HandleFunc("/getPostComments/{postId}", server.GetPostCommentsHandler).Methods("GET")
 	router.HandleFunc("/removeComment/{commentId}", server.RemoveCommentHandler).Methods("DELETE")
 
+	router.HandleFunc("/addToFavourites/{postId}/{userId}", server.AddToFavouritesHandler).Methods("PUT")
+	router.HandleFunc("/getUserFavourites/{userId}", server.AddToFavouritesHandler).Methods("GET")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("Post server starting...")

@@ -33,7 +33,9 @@ export default class Post extends Component {
             usersCommented: [],
             commentText: "",
             commentButtonVisible: false,
-            currentUserId: 0
+            currentUserId: 0,
+            userProfile: false,
+            favouritePost: false
         };
     
         this.likeHandler = this.likeHandler.bind(this);
@@ -114,6 +116,11 @@ export default class Post extends Component {
         }
 
         await this.getUsers();
+        if(window.location.href.includes("/userProfile")){
+            this.setState({userProfile: true});
+        }else{
+            this.setState({userProfile: false});
+        }
     }
 
     async getUsers(){
@@ -145,6 +152,7 @@ export default class Post extends Component {
                             <span className="postDate">{this.state.postDate}</span>
                         </div>
                         <div className="postTopRight">
+                            <input class="star" type="checkbox" style={{display: this.state.userProfile ? 'flex' : 'none'}} checked={this.state.favouritePost ? 'true' : 'false'} />
                             <MoreVertIcon />
                         </div>
                     </div>

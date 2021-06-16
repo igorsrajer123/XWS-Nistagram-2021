@@ -37,6 +37,30 @@
     align-items: center;
 }
 
+.star{
+    visibility:hidden;
+    font-size:30px;
+    cursor:pointer;
+    margin-right: 15px;
+    margin-bottom: 25px;
+}
+
+.star:before {
+    content: "\2605";
+    visibility:visible;
+    color: blue;
+}
+
+.star:checked:before {
+    content: "\2606";
+}
+
+.postTopRight{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .postUsername{
     font-size: 15px;
     font-weight: bold;

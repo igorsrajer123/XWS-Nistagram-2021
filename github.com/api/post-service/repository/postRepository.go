@@ -36,6 +36,7 @@ func New() (*PostRepository, error) {
 	postRepo.db.AutoMigrate(&model.Post{})
 	postRepo.db.AutoMigrate(&model.File{})
 	postRepo.db.AutoMigrate(&model.Comment{})
+	postRepo.db.AutoMigrate(&userModel.User{})
 
 	return postRepo, nil
 }
@@ -178,4 +179,29 @@ func (postRepo *PostRepository) RemoveComment(commentId int) int {
 	postRepo.db.Where("id = ?", commentId).Delete(&comment)
 
 	return comment.ID
+}
+
+func (postRepo *PostRepository) AddToFavourites(postId string, userId string) {
+	user := &userModel.User{}
+	postRepo.db.Where("id = ?", userId).First(&user)
+	fmt.Println(user)
+
+	post := &model.Post{}
+	postRepo.db.Where("id = ?", postId).First(&post)
+	fmt.Println(post)
+
+	fmt.Println(len(user.FavouritePosts))
+	user.FavouritePosts = append(user.FavouritePosts, int64(post.ID))
+	fmt.Println(len(user.FavouritePosts))
+}
+
+func (postRepo *PostRepository) RemoveFromFavourites(postId string, userId string) {
+
+}
+
+func (postRepo *PostRepository) GetUserFavourites(userId string) pq.Int64Array {
+	var user userModel.User
+	postRepo.db.Where("id = ?", userId).First(&user)
+
+	return user.FavouritePosts
 }
