@@ -36,7 +36,6 @@ func New() (*PostRepository, error) {
 	postRepo.db.AutoMigrate(&model.Post{})
 	postRepo.db.AutoMigrate(&model.File{})
 	postRepo.db.AutoMigrate(&model.Comment{})
-	postRepo.db.AutoMigrate(&userModel.User{})
 
 	return postRepo, nil
 }

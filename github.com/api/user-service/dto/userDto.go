@@ -16,7 +16,7 @@ type UserDto struct {
 	Website        string        `json:"website"`
 	CoverImageID   uint          `json:"coverImageId"`
 	ProfileImageID uint          `json:"profileImageId"`
-	FavouritePosts pq.Int64Array `json:"favouritePosts"`
+	FavouritePosts pq.Int64Array `json:"favouritePosts" gorm:"type:integer[]"`
 }
 
 type ResponseId struct {

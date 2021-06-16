@@ -19,7 +19,7 @@ type User struct {
 	Followers      []*User       `gorm:"foreignkey:ID;many2many:followers;" json:"followers"`
 	CoverImageID   uint          `json:"coverImageId"`
 	ProfileImageID uint          `json:"profileImageId"`
-	FavouritePosts pq.Int64Array `json:"favouritePosts"`
+	FavouritePosts pq.Int64Array `json:"favouritePosts" gorm:"type:integer[]"`
 }
 
 type FollowRequest struct {
