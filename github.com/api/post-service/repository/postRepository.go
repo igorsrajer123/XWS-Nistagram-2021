@@ -255,3 +255,34 @@ func (postRepo *PostRepository) GetUserFavourites(userId string) pq.Int64Array {
 
 	return user.FavouritePosts
 }
+
+func (postRepo *PostRepository) GetUserHighlightedStories(userId string) pq.Int64Array {
+	var user userModel.User
+	postRepo.db.Where("id = ?", userId).First(&user)
+
+	return user.HighlightedStories
+}
+
+func (postRepo *PostRepository) AddToHighlighted(storyId string, userId string) {
+	user := &userModel.User{}
+	postRepo.db.Where("id = ?", userId).First(&user)
+
+	story := &model.Story{}
+	postRepo.db.Where("id = ?", storyId).First(&story)
+
+	user.HighlightedStories = append(user.HighlightedStories, int64(story.ID))
+	postRepo.db.Save(&user)
+}
+
+func (postRepo *PostRepository) RemoveFromHighlighted(storyId string, userId string) {
+	user := &userModel.User{}
+	postRepo.db.Where("id = ?", userId).First(&user)
+
+	storyInt, _ := strconv.Atoi(storyId)
+	for i, story := range user.HighlightedStories {
+		if story == int64(storyInt) {
+			user.HighlightedStories = append(user.HighlightedStories[:i], user.HighlightedStories[i+1:]...)
+			postRepo.db.Save(&user)
+		}
+	}
+}

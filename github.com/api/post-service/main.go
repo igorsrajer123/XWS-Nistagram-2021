@@ -47,6 +47,10 @@ func main() {
 	router.HandleFunc("/getUserStories/{userId}", server.GetUserStoriesHandler).Methods("GET")
 	router.HandleFunc("/getStory/{storyId}", server.GetStoryByIdHandler).Methods("GET")
 
+	router.HandleFunc("/getHighlightedStories/{userId}", server.GetUserHighlightedStoriesHandler).Methods("GET")
+	router.HandleFunc("/addToHighlighted/{storyId}/{userId}", server.AddToHighlightedHandler).Methods("PUT")
+	router.HandleFunc("/removeFromHighlighted/{storyId}/{userId}", server.RemoveFromHighlightedHandler).Methods("PUT")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("Post server starting...")

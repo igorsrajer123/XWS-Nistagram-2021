@@ -369,3 +369,48 @@ func (postServer *PostServer) GetUserFavouritesHandler(w http.ResponseWriter, re
 	posts := postServer.postRepo.GetUserFavourites(userId)
 	RenderJSON(w, posts)
 }
+
+func (postServer *PostServer) GetUserHighlightedStoriesHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	userId, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stories := postServer.postRepo.GetUserHighlightedStories(userId)
+	RenderJSON(w, stories)
+}
+
+func (postServer *PostServer) AddToHighlightedHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	storyId, ok := vars["storyId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	vars2 := mux.Vars(req)
+	userId, ok := vars2["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	postServer.postRepo.AddToHighlighted(storyId, userId)
+	RenderJSON(w, storyId)
+}
+
+func (postServer *PostServer) RemoveFromHighlightedHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	storyId, ok := vars["storyId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	vars2 := mux.Vars(req)
+	userId, ok := vars2["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	postServer.postRepo.RemoveFromHighlighted(storyId, userId)
+	RenderJSON(w, storyId)
+}
