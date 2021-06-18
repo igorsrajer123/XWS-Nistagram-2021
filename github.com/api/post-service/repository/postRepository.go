@@ -37,6 +37,7 @@ func New() (*PostRepository, error) {
 	postRepo.db.AutoMigrate(&model.Post{})
 	postRepo.db.AutoMigrate(&model.File{})
 	postRepo.db.AutoMigrate(&model.Comment{})
+	postRepo.db.AutoMigrate(&model.Story{})
 
 	return postRepo, nil
 }
@@ -74,6 +75,31 @@ func (postRepo *PostRepository) CreateStatusPost(description string, tags pq.Str
 	postRepo.db.Create(&post)
 
 	return post.ID
+}
+
+func (postRepo *PostRepository) CreateStory(description string, tags pq.StringArray, location string,
+	userRefer int, closeFriendsOnly bool) int {
+
+	story := model.Story{
+		Description:      description,
+		Location:         location,
+		UserRefer:        userRefer,
+		Published:        time.Now(),
+		Tags:             tags,
+		CloseFriendsOnly: closeFriendsOnly,
+		Visible:          true,
+		ImageID:          0}
+
+	postRepo.db.Create(&story)
+
+	return story.ID
+}
+
+func (postRepo *PostRepository) GetUserStories(userId int) []model.Story {
+	var stories []model.Story
+	postRepo.db.Where("user_refer = ?", userId).Find(&stories)
+
+	return stories
 }
 
 func (postRepo *PostRepository) GetUserStatusPosts(userId int) []model.Post {
@@ -132,7 +158,18 @@ func (postRepo *PostRepository) CreateStatusPostPhoto(file *model.File, postId i
 
 	post.ImageID = file.ID
 	postRepo.db.Save(&post)
-	fmt.Println(post.ImageID)
+
+	return nil
+}
+
+func (postRepo *PostRepository) CreateStoryPhoto(file *model.File, storyId int) error {
+	postRepo.db.Create(file)
+
+	var story model.Story
+	postRepo.db.Where("id = ?", storyId).First(&story)
+
+	story.ImageID = file.ID
+	postRepo.db.Save(&story)
 
 	return nil
 }

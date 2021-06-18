@@ -52,6 +52,8 @@ func main() {
 	router.HandleFunc("/removeCloseFriend/{userId}/{currentUserId}", server.RemoveFromCloseFriendsHandler).Methods("PUT")
 	router.HandleFunc("/getCloseFriends/{userId}", server.GetUserCloseFriendsHandler).Methods("GET")
 
+	router.HandleFunc("/isInCloseFriends/{currentId}/{userId}", server.IsInCloseFriendsHandler).Methods("GET")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("User server starting...")

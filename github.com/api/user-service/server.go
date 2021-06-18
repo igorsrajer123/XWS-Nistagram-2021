@@ -498,3 +498,24 @@ func (userServer *UserServer) GetUserCloseFriendsHandler(w http.ResponseWriter, 
 	closeFriends := userServer.userRepo.GetUserCloseFriends(userId)
 	RenderJSON(w, closeFriends)
 }
+
+func (userServer *UserServer) IsInCloseFriendsHandler(w http.ResponseWriter, req *http.Request) {
+	vars2 := mux.Vars(req)
+	currentUserId, ok := vars2["currentId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	fmt.Println(currentUserId)
+
+	vars := mux.Vars(req)
+	userId, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	fmt.Println(userId)
+
+	isInCloseFriends := userServer.userRepo.IsInCloseFriends(currentUserId, userId)
+	RenderJSON(w, isInCloseFriends)
+}

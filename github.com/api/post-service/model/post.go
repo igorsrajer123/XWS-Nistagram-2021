@@ -30,3 +30,15 @@ type Comment struct {
 	UserID int    `json:"userID"`
 	Text   string `json:"text"`
 }
+
+type Story struct {
+	ID               int            `json:"id" gorm:"primaryKey"`
+	Description      string         `json:"description"`
+	Tags             pq.StringArray `json:"tags" gorm:"type:text[][]"`
+	Published        time.Time      `json:"published"`
+	Location         string         `json:"location"`
+	UserRefer        int            `json:"userRefer"`
+	ImageID          uint           `json:"imageID"`
+	Visible          bool           `json:"visible"`
+	CloseFriendsOnly bool           `json:"closeFriendsOnly"`
+}

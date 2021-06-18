@@ -22,12 +22,14 @@ export default class FavouritePosts extends Component {
         var actualPosts = [];
         if(currentUser != null){
             const favouritePosts = await PostService.getFavouritePosts(currentUser.id);
-            const userPosts = await PostService.getUserPosts(currentUser.id);
-            for(var i = 0; i < userPosts.length; i++){
-                for(var j = 0; j < favouritePosts.length; j++){
-                    if(userPosts[i].id == favouritePosts[j]){
-                        actualPosts.push(userPosts[i]);
-                        this.setState({favouritePosts: actualPosts});
+            if(favouritePosts != null){
+                const userPosts = await PostService.getUserPosts(currentUser.id);
+                for(var i = 0; i < userPosts.length; i++){
+                    for(var j = 0; j < favouritePosts.length; j++){
+                        if(userPosts[i].id == favouritePosts[j]){
+                            actualPosts.push(userPosts[i]);
+                            this.setState({favouritePosts: actualPosts});
+                        }
                     }
                 }
             }

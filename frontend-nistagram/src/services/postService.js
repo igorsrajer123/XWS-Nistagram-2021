@@ -5,7 +5,6 @@ async function getUserPosts(userId){
     if(response.status == 404)
         return null;
 
-    
     const newData = await response.json();
     const sortedData = newData.sort((a, b) => b.id - a.id)
     return sortedData;

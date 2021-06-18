@@ -99,6 +99,55 @@ func (postServer *PostServer) CreateStatusPostHandler(w http.ResponseWriter, req
 	w.WriteHeader(http.StatusCreated)
 }
 
+func (postServer *PostServer) CreateStoryHandler(w http.ResponseWriter, req *http.Request) {
+	req.ParseMultipartForm(32 << 20)
+	file, handle, err := req.FormFile("file")
+
+	defer file.Close()
+	absPath, _ := os.Getwd()
+
+	path := filepath.Join(absPath, "files", handle.Filename)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		http.Error(w, "Expected file", http.StatusBadRequest)
+		return
+	}
+
+	_, err = io.Copy(f, file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var savingFile model.File
+	savingFile.Path = path
+	savingFile.Type = "IMAGE"
+
+	var story model.Story
+	story.Description = req.PostFormValue("description")
+	story.Location = req.PostFormValue("location")
+	userId := req.PostFormValue("user")
+	story.UserRefer, _ = strconv.Atoi(userId)
+	stringTags := req.PostFormValue("tags")
+	story.Tags = strings.Split(stringTags, " ")
+	checkbox := req.PostFormValue("closeFriends")
+
+	if checkbox == "on" {
+		story.CloseFriendsOnly = true
+	} else {
+		story.CloseFriendsOnly = false
+	}
+
+	storyId := postServer.postRepo.CreateStory(story.Description, story.Tags, story.Location, story.UserRefer, story.CloseFriendsOnly)
+
+	err = postServer.postRepo.CreateStoryPhoto(&savingFile, storyId)
+	if err != nil {
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
 func (postServer *PostServer) GetUserStatusPostsHandler(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, ok := vars["userId"]
@@ -110,6 +159,22 @@ func (postServer *PostServer) GetUserStatusPostsHandler(w http.ResponseWriter, r
 	userPosts := postServer.postRepo.GetUserStatusPosts(stringId)
 	if userPosts != nil {
 		RenderJSON(w, userPosts)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func (postServer *PostServer) GetUserStoriesHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	userStories := postServer.postRepo.GetUserStories(stringId)
+	if userStories != nil {
+		RenderJSON(w, userStories)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}

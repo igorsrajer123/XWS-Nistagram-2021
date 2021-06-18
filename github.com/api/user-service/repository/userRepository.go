@@ -374,3 +374,21 @@ func (userRepo *UserRepository) GetUserCloseFriends(currentUserId string) pq.Int
 
 	return user.CloseFriends
 }
+
+func (userRepo *UserRepository) IsInCloseFriends(currentUserId string, userId string) bool {
+	var currentUser model.User
+	userRepo.db.Where("id = ?", currentUserId).First(&currentUser)
+
+	var user model.User
+	userRepo.db.Where("id = ?", userId).First(&user)
+
+	if user.CloseFriends != nil {
+		for _, closeFriend := range user.CloseFriends {
+			if int64(currentUser.ID) == closeFriend {
+				return true
+			}
+		}
+	}
+
+	return false
+}
