@@ -3,6 +3,7 @@ import './rightbar.css';
 import FavouritePosts from './../../pages/favouritePostsModal/FavouritePosts';
 import ViewCloseFriends from './../../pages/closeFriendsModals/ViewCloseFriends';
 import AddCloseFriends from './../../pages/closeFriendsModals/AddCloseFriends';
+import PreviewMyStories from './../../sharedComponents/storybar/PreviewMyStories';
 
 export default class Rightbar extends Component {
     constructor(props) {
@@ -11,6 +12,7 @@ export default class Rightbar extends Component {
         this.favouritePosts = React.createRef();
         this.viewCloseFriends = React.createRef();
         this.addCloseFriends = React.createRef();
+        this.viewMyStories = React.createRef();
     }
 
     favouritePostsModal = () => this.favouritePosts.current.toggleModal();
@@ -19,12 +21,15 @@ export default class Rightbar extends Component {
 
     addCloseFriendsModal = () => this.addCloseFriends.current.toggleModal();
 
+    viewMyStoriesModal = () => {this.viewMyStories.current.toggleModal();}
+
     render() {
         return (
             <div className="rightbar">
                 <span className="rightbarItem" onClick={this.favouritePostsModal}>View Favourite Posts</span>
                 <span className="rightbarItem" onClick={this.viewCloseFriendsModal}>View Close Friends</span>
                 <span className="rightbarItem" onClick={this.addCloseFriendsModal}>Add Close Friends</span>
+                <span className="rightbarItem" onClick={this.viewMyStoriesModal}>View My Stories</span>
                 <span className="rightbarItem">Liked Posts</span>
                 <span className="rightbarItem">Disliked Posts</span>
                 <span className="rightbarItem">Account Options</span>
@@ -32,6 +37,7 @@ export default class Rightbar extends Component {
                     <FavouritePosts ref={this.favouritePosts}/>
                     <ViewCloseFriends ref={this.viewCloseFriends} />
                     <AddCloseFriends ref={this.addCloseFriends} />
+                    <PreviewMyStories ref={this.viewMyStories} />
                 </div>
             </div>
         )

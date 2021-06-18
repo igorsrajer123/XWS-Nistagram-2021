@@ -45,6 +45,7 @@ func main() {
 
 	router.HandleFunc("/createStory", server.CreateStoryHandler).Methods("POST")
 	router.HandleFunc("/getUserStories/{userId}", server.GetUserStoriesHandler).Methods("GET")
+	router.HandleFunc("/getStory/{storyId}", server.GetStoryByIdHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

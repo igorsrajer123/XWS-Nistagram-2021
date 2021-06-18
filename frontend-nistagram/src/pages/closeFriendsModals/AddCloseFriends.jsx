@@ -21,9 +21,12 @@ export default class AddCloseFriends extends Component {
         const currentUser = await LoginService.getCurrentUser()
         var chooseFromNow = [];
         if(currentUser != null){
-            const closeFriends = await UserService.getUserCloseFriends(currentUser.id);
+            var closeFriends = await UserService.getUserCloseFriends(currentUser.id);
             const userFollowings = await FollowService.getUserFollowings(currentUser.id);
-            if(userFollowings != null && closeFriends != null){
+            if(closeFriends == null)
+                closeFriends = [];
+                
+            if(userFollowings != null){
                 chooseFromNow = userFollowings.filter(el => {
                     return !closeFriends.find(obj => {
                         return el.id == obj;

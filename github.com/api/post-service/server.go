@@ -180,6 +180,17 @@ func (postServer *PostServer) GetUserStoriesHandler(w http.ResponseWriter, req *
 	}
 }
 
+func (postServer *PostServer) GetStoryByIdHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["storyId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	myStory := postServer.postRepo.GetStoryById(id)
+	RenderJSON(w, myStory)
+}
+
 func (postServer *PostServer) LikePostHandler(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id, ok := vars["postId"]

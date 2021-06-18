@@ -1,0 +1,49 @@
+.viewMyStoriesModal{
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    margin-top: -50px;
+    overflow-y: auto;
+    width: 50%;
+    height: 95%;
+    background-color: white;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.viewAllMyStories{
+    background-color: lightblue;
+    margin-top: 5%;
+    height: auto;
+    width: 60%;
+    border-style: ridge;
+    display: flex;
+    flex-direction: column;
+}
+
+.myStoryImage{
+    object-fit: fill;
+    height: 80%;
+    width: 100%;
+    border-bottom: ridge;
+}
+
+.myStoryInfo{
+    display: flex;
+    flex-direction: column;
+    margin-left: 2%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2%;
+}
+
+.storyInfoItem{
+    display: flex;
+    align-items: center;
+}
+
+.wrum{
+    margin: 5px;
+}

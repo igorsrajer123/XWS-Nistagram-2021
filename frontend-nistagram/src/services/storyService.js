@@ -40,9 +40,10 @@ async function showHomepageStories(userId){
                 }else {
                     var oneFollowingStories = await getUserStories(followings[i].id);
                     if(oneFollowingStories.length != 0)
-                        for(var j = 0; j < oneFollowingStories.length; j++)
-                            if(oneFollowingStories[j].visible == true && oneFollowingStories[j].CloseFriendsOnly == false)
+                        for(var j = 0; j < oneFollowingStories.length; ++j)
+                            if(oneFollowingStories[j].visible == true && oneFollowingStories[j].closeFriendsOnly == false){
                                 followingsStories.push(oneFollowingStories[j]);
+                            }
                 }
             }
         }
@@ -53,7 +54,19 @@ async function showHomepageStories(userId){
     return finalStories;       
 }
 
+async function getStory(storyId) {
+    const url = "http://localhost:8000/api/post/getStory/" + storyId;  
+    const response = await fetch(url);
+    
+    if(response.status == 404)
+        return null;
+
+    const data = await response.json();
+    return data;
+}
+
 export default {
     getUserStories,
-    showHomepageStories
+    showHomepageStories,
+    getStory
 }

@@ -1,0 +1,46 @@
+.previewStoryModal{
+    position: absolute;
+    top: 10%;
+    left: 25%;
+    margin-top: -50px;
+    overflow-y: auto;
+    width: 50%;
+    height: 95%;
+    overflow: 'auto';
+    background-color: lightblue;
+    border-radius: 15%;
+    outline: none;
+    border-style: ridge;
+}
+
+.previewOneStoryDiv{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.previewOneStory{
+    object-fit: fill;
+    height: 80%;
+    border-bottom: ridge;
+}
+
+.storyInfoDiv{
+    display: flex;
+    flex-direction: column;
+    margin-left: 2%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2%;
+}
+
+.storyInfo{
+    margin: 5px;
+    display: flex;
+    align-items: center;
+
+}
+
+.storyItem{
+    margin: 5px;
+}
