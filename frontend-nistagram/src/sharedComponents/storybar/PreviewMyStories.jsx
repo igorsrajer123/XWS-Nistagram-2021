@@ -15,12 +15,14 @@ export default class PreviewMyStories extends Component {
             isOpen: false,
             currentUserStories: [],
             objects: [],
-            randomId: ""
+            randomId: "",
+            currentUserId: ""
         }
 
         this.toggleModal = this.toggleModal.bind(this);
         this.setUserStories = this.setUserStories.bind(this);
         this.setObjects = this.setObjects.bind(this);
+        this.setHighlighted = this.setHighlighted.bind(this);
     }
 
     toggleModal = () => {
@@ -46,6 +48,22 @@ export default class PreviewMyStories extends Component {
         await Promise.all(this.state.currentUserStories.map(async s => {
             const user = await UserService.getUserById(s.userRefer);
             const photo = await PostService.getPostPhoto(s.imageID);
+            var isInHighlighted = false;
+
+            const currentUser = await LoginService.getCurrentUser();
+            if(currentUser != null){
+                this.setState({currentUserId: currentUser.id});
+                const highlightedStories = await StoryService.getUserHighlightedStories(currentUser.id);
+                if(highlightedStories != null){
+                    for(var i = 0; i < highlightedStories.length; ++i){
+                        if(highlightedStories[i] == s.id){
+                            isInHighlighted = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             const someDate = s.published;
             var dateFormat = require("dateformat");
             var tempObjects = {
@@ -55,12 +73,20 @@ export default class PreviewMyStories extends Component {
                 description: s.description,
                 location: s.location,
                 date: dateFormat(someDate, "mmmm dS yyyy, h:MM TT"),
-                tags: s.tags
+                tags: s.tags,
+                highlighted: isInHighlighted
             }
             obj.push(tempObjects);
             this.setState({objects: obj});
             this.setState({randomId: tempObjects.id});
         }));
+    }
+
+    async setHighlighted(story){
+        if(story.highlighted)
+            await StoryService.removeFromHighlighted(story.id, this.state.currentUserId);
+        else
+            await StoryService.addToHighlighted(story.id, this.state.currentUserId);
     }
 
     setObjects(){
@@ -72,7 +98,9 @@ export default class PreviewMyStories extends Component {
                         <div className="storyInfoItem">
                             <span style={{fontWeight: 'bold', fontSize: '20px'}} className="wrum"><b>{s.user}</b></span>
                             <span className="wrum">{s.date}</span>   
-                            <input class="star" type="checkbox" style={{display: 'flex'}}/>
+                            <input class="star" type="checkbox" style={{display: 'flex'}}
+                                                                checked={s.highlighted ? '' : 'false'} 
+                                                                onClick={() => this.setHighlighted(s)} />
                         </div>
                         <span className="storyInfoItem" className="wrum">{s.description}</span>
                         <div className="storyInfoItem">

@@ -10,6 +10,7 @@ import LoginService from '../../services/loginService';
 import Feed from './../../sharedComponents/feed/Feed';
 import Post from './../../sharedComponents/post/Post';
 import PostService from './../../services/postService';
+import PreviewUserHighlights from './../../sharedComponents/storybar/PreviewUserHighlights';
 
 export default class PreviewUserProfile extends Component {
     constructor(props){
@@ -37,12 +38,18 @@ export default class PreviewUserProfile extends Component {
             showFeedAndSidebar: true,
             profilePhoto: "",
             coverPhoto: "",
-            userPosts: null
+            userPosts: null,
+            showHighlights: false
         }
+
+        this.viewHighlights = React.createRef();
 
         this.toggleModal = this.toggleModal.bind(this);
         this.followUserClick = this.followUserClick.bind(this);
+        this.viewUserHighlights = this.viewUserHighlights.bind(this);
     }
+
+    viewUserHighlights = () => this.viewHighlights.current.toggleModal();
 
     toggleModal = () => {
         if(this.state.isOpen)
@@ -157,6 +164,7 @@ export default class PreviewUserProfile extends Component {
             if(followingUser){
                 this.setState({followButtonText: "Unfollow"});
                 this.setState({followingSelectedUser: true});
+                this.setState({showHighlights: true});
             }else{
                 this.setState({followButtonText: "Follow"});
                 this.setState({followingSelectedUser: false});
@@ -176,6 +184,7 @@ export default class PreviewUserProfile extends Component {
 
             if(this.state.privateProfile && !this.state.followingSelectedUser){
                 this.setState({showFeedAndSidebar: false});
+                this.setState({showHighlights: false})
             }
         }
     }
@@ -223,7 +232,11 @@ export default class PreviewUserProfile extends Component {
                         <div className="previewFeed">
                             <div className="privateProfile" style={{display: this.state.showFeedAndSidebar ? 'none' : 'block'}}>This Profile is Private!</div>
                             <div className="previewPosts" style={{display: this.state.showFeedAndSidebar ? 'block' : 'none'}}>
+                                <div style={{display: this.state.showHighlights ? 'flex' : 'none'}}>
+                                    <button className="previewUsersHighlightsButton" onClick={this.viewUserHighlights}>View User's Profile Highlights!</button>
+                                </div>
                                 <this.UserPosts />
+                                <PreviewUserHighlights ref={this.viewHighlights} userId={this.props.userId} />
                             </div>
                         </div>                   
                     </div>

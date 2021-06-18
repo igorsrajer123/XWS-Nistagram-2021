@@ -65,8 +65,36 @@ async function getStory(storyId) {
     return data;
 }
 
+async function getUserHighlightedStories(userId) {
+    const url = "http://localhost:8000/api/post/getHighlightedStories/" + userId;  
+    const response = await fetch(url);
+
+    const data = await response.json();
+    return data;
+}
+
+async function addToHighlighted(storyId, userId) {
+    const url = "http://localhost:8000/api/post/addToHighlighted/" + storyId + "/" + userId;  
+    await fetch(url, {
+        method: "PUT"
+    });
+    window.location.reload();
+}
+
+async function removeFromHighlighted(storyId, userId) {
+    const url = "http://localhost:8000/api/post/removeFromHighlighted/" + storyId + "/" + userId;  
+    await fetch(url, {
+        method: "PUT"
+    });
+    window.location.reload();
+}
+
+
 export default {
     getUserStories,
     showHomepageStories,
-    getStory
+    getStory,
+    getUserHighlightedStories,
+    addToHighlighted,
+    removeFromHighlighted
 }

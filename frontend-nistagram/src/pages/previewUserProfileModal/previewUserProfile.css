@@ -145,3 +145,30 @@
     text-align: center;
     color: red;
 }
+
+.previewUsersHighlightsButton{
+    font-weight: bold;
+    width: 30%;
+    height: auto;
+    font-size: 20px;
+    border-style: ridge;
+    border-color: white;
+    border-width: 2px;
+    background-color: dodgerblue;
+    color: white;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    transition: 0.9s;
+}
+
+.previewUsersHighlightsButton:hover{
+    text-decoration: underline;
+    cursor: pointer;
+    color: dodgerblue;
+    background-color: white;
+    border-color: dodgerblue;
+
+}
+
+.previewUsersHighlightsButton:focus{
+    outline: none;
+}
