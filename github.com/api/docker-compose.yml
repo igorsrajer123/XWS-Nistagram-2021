@@ -83,6 +83,25 @@ services:
             - db 
         volumes:
             - ./user-service/files:/go/app/files  
+    scheduling-service:
+        restart: always
+        image: scheduling-service:compose_build
+        build:
+            context: ./scheduling-service
+            dockerfile: Dockerfile
+        networks: 
+            - backend
+        environment:
+            DBHOST: db
+            USER: postgres
+            PASSWORD: postgres
+            DBNAME: postgres
+            DBPORT: 5432
+            PORT: 8000
+        depends_on:
+            - db 
+        volumes:
+            - ./scheduling-service/files:/go/app/files 
 networks: 
     backend:
         name: nistagram
