@@ -48,6 +48,8 @@ func FromUserToUserDto(user model.User) dto.UserDto {
 	userDto.FavouritePosts = user.FavouritePosts
 	userDto.CloseFriends = user.CloseFriends
 	userDto.HighlightedStories = user.HighlightedStories
+	userDto.LikedPosts = user.LikedPosts
+	userDto.DislikedPosts = user.DislikedPosts
 
 	return userDto
 }

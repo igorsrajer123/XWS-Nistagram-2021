@@ -116,9 +116,14 @@ func (postRepo *PostRepository) GetUserStatusPosts(userId int) []model.Post {
 	return statusPosts
 }
 
-func (postRepo *PostRepository) LikePost(postId int) {
+func (postRepo *PostRepository) LikePost(postId int, userId int) {
 	statusPost := &model.Post{}
 	postRepo.db.Where("id = ?", postId).Find(&statusPost)
+
+	user := &userModel.User{}
+	postRepo.db.Where("id = ?", userId).Find(&user)
+
+	fmt.Println(user.LikedPosts)
 
 	statusPost.Likes = statusPost.Likes + 1
 	postRepo.db.Save(&statusPost)

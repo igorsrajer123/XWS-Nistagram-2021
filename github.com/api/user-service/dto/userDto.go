@@ -19,6 +19,8 @@ type UserDto struct {
 	FavouritePosts     pq.Int64Array `json:"favouritePosts" gorm:"type:integer[]"`
 	CloseFriends       pq.Int64Array `json:"closeFriends" gorm:"type:integer[]"`
 	HighlightedStories pq.Int64Array `json:"highlightedStories" gorm:"type:integer[]"`
+	LikedPosts         pq.Int64Array `json:"likedPosts" gorm:"type:integer[]"`
+	DislikedPosts      pq.Int64Array `json:"dislikedPosts" gorm:"type:integer[]"`
 }
 
 type ResponseId struct {

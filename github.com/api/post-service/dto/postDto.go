@@ -15,6 +15,7 @@ type PostDto struct {
 	UserRefer   int
 	Type        string
 	Likes       int
+	Dislikes    int
 }
 
 type ResponseId struct {

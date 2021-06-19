@@ -198,8 +198,18 @@ func (postServer *PostServer) LikePostHandler(w http.ResponseWriter, req *http.R
 		fmt.Println("Id is missing!")
 	}
 
+	vars2 := mux.Vars(req)
+	userId, ok := vars2["currentId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	fmt.Println(id)
+	fmt.Println(userId)
+
 	stringId, _ := strconv.Atoi(id)
-	postServer.postRepo.LikePost(stringId)
+	userStringId, _ := strconv.Atoi(userId)
+	postServer.postRepo.LikePost(stringId, userStringId)
 }
 
 func (postServer *PostServer) DislikePostHandler(w http.ResponseWriter, req *http.Request) {

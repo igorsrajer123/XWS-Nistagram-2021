@@ -29,7 +29,7 @@ func main() {
 	router.HandleFunc("/getAllPosts", server.GetAllPostsHandler).Methods("GET")
 	router.HandleFunc("/createStatusPost", server.CreateStatusPostHandler).Methods("POST")
 	router.HandleFunc("/getUserPosts/{userId}", server.GetUserStatusPostsHandler).Methods("GET")
-	router.HandleFunc("/likePost/{postId}", server.LikePostHandler).Methods("PUT")
+	router.HandleFunc("/likePost/{postId}/{currentId}", server.LikePostHandler).Methods("PUT")
 	router.HandleFunc("/dislikePost/{postId}", server.DislikePostHandler).Methods("PUT")
 	router.HandleFunc("/searchPublicPosts/{searchParam}", server.SearchPublicPostsHandler).Methods("GET")
 	router.HandleFunc("/getAllPostPhotos", server.GetAllPostPhotosHandler).Methods("GET")
