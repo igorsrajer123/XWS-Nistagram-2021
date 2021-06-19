@@ -4,6 +4,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ProfilePicture from './../../assets/noPicture.jpg';
 import PostPicture from './../../assets/witchKing.jpg';
 import LikeIcon from './../../assets/like.png';
+import DislikeIcon from './../../assets/dislike_PNG73.png';
 import UserService from './../../services/userService';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import PostService from './../../services/postService';
@@ -15,6 +16,7 @@ export default class Post extends Component {
     
         this.state = {
             isLiked: false,
+            isDisliked: false,
             postDescription: "",
             postUserFirstName: "",
             postUserLastName: "",
@@ -22,6 +24,7 @@ export default class Post extends Component {
             postTags: [],
             postLocation: "",
             likes: 0,
+            dislikes: 0,
             hideBottomPart: false,
             profilePhoto: "",
             currentUserPhoto: "",
@@ -39,6 +42,7 @@ export default class Post extends Component {
         };
     
         this.likeHandler = this.likeHandler.bind(this);
+        this.dislikeHandler = this.dislikeHandler.bind(this);
         this.toggleComments = this.toggleComments.bind(this);
         this.getUsers = this.getUsers.bind(this);
         this.commentTextChange = this.commentTextChange.bind(this);
@@ -51,11 +55,20 @@ export default class Post extends Component {
         this.setState({likes: this.state.isLiked ? this.state.likes - 1 : this.state.likes + 1});
         this.setState({isLiked: this.state.isLiked ? false : true});
 
-        if(!this.state.isLiked){
-            await PostService.likePost(this.props.post.id);
-        }else{
-            await PostService.dislikePost(this.props.post.id);
-        }
+        this.setState({dislikes: this.state.isDisliked ? this.state.dislikes - 1 : this.state.dislikes})
+        this.setState({isDisliked: false})
+
+        await PostService.likePost(this.props.post.id, this.state.currentUserId);
+    }
+
+    async dislikeHandler() {
+        this.setState({dislikes: this.state.isDisliked ? this.state.dislikes - 1 : this.state.dislikes + 1});
+        this.setState({isDisliked: this.state.isDisliked ? false : true});
+
+        this.setState({likes: this.state.isLiked ? this.state.likes - 1 : this.state.likes});
+        this.setState({isLiked: false});
+
+        await PostService.dislikePost(this.props.post.id, this.state.currentUserId);
     }
 
     toggleComments = () => this.setState({showCommentDiv: this.state.showCommentDiv ? false : true});
@@ -81,6 +94,7 @@ export default class Post extends Component {
         this.setState({postTags: this.props.post.tags});
         this.setState({postLocation: this.props.post.location});
         this.setState({likes: this.props.post.likes});
+        this.setState({dislikes: this.props.post.dislikes});
         this.setState({postPhotoId: this.props.post.imageID});
 
         const user = await UserService.getUserById(this.props.post.userRefer)
@@ -109,6 +123,25 @@ export default class Post extends Component {
             const currentUserImg = await UserService.getUserProfilePhoto(currentUser.profileImageId)
             this.setState({currentUserPhoto: currentUserImg});
             this.setState({currentUserId: currentUser.id});
+            const currentUserLikes = await PostService.getLikedPosts(currentUser.id);
+            if(currentUserLikes != null){
+                for(var i = 0; i < currentUserLikes.length; i++){
+                    if(currentUserLikes[i] == this.props.post.id){
+                        this.setState({isLiked: true});
+                        break;
+                    }
+                }
+            }
+
+            const currentUserDislikes = await PostService.getDislikedPosts(currentUser.id);
+            if(currentUserDislikes != null){
+                for(var i = 0; i < currentUserDislikes.length; i++){
+                    if(currentUserDislikes[i] == this.props.post.id){
+                        this.setState({isDisliked: true});
+                        break;
+                    }
+                }
+            }
         }
 
         const comments = await PostService.getPostComments(this.props.post.id);
@@ -197,8 +230,10 @@ export default class Post extends Component {
                     </div>
                     <div className="postBottom" >
                         <div className="postBottomLeft">
-                            <img className="likeIcon" src={LikeIcon} onClick={this.likeHandler} alt="" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible'}} />
+                            <img className="likeIcon" src={LikeIcon} onClick={this.likeHandler} alt="" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible', borderStyle: this.state.isLiked ? 'double' : 'none', borderRadius: '50%'}} />
                             <span className="postLikeCounter">{this.state.likes} people likes this!</span>
+                            <img className="dislikeIcon" src={DislikeIcon} onClick={this.dislikeHandler} alt="" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible', borderStyle: this.state.isDisliked ? 'double' : 'none', borderRadius: '50%'}} />
+                            <span className="postDislikeCounter">{this.state.dislikes} people dislikes this!</span>
                         </div>
                         <div className="postBottomRight" style={{visibility: this.state.hideBottomPart ? 'hidden' : 'visible'}}>
                             <span className="postCommentText" onClick={this.toggleComments}>{this.state.numberOfComments} comments</span>

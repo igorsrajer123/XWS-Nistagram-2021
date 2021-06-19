@@ -204,9 +204,6 @@ func (postServer *PostServer) LikePostHandler(w http.ResponseWriter, req *http.R
 		fmt.Println("Id is missing!")
 	}
 
-	fmt.Println(id)
-	fmt.Println(userId)
-
 	stringId, _ := strconv.Atoi(id)
 	userStringId, _ := strconv.Atoi(userId)
 	postServer.postRepo.LikePost(stringId, userStringId)
@@ -219,8 +216,47 @@ func (postServer *PostServer) DislikePostHandler(w http.ResponseWriter, req *htt
 		fmt.Println("Id is missing!")
 	}
 
+	vars2 := mux.Vars(req)
+	userId, ok := vars2["currentId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
 	stringId, _ := strconv.Atoi(id)
-	postServer.postRepo.DislikePost(stringId)
+	userStringId, _ := strconv.Atoi(userId)
+	postServer.postRepo.DislikePost(stringId, userStringId)
+}
+
+func (postServer *PostServer) GetLikedPostsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	likedPosts := postServer.postRepo.GetLikedPosts(stringId)
+	if likedPosts != nil {
+		RenderJSON(w, likedPosts)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func (postServer *PostServer) GetDislikedPostsHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, ok := vars["userId"]
+	if !ok {
+		fmt.Println("Id is missing!")
+	}
+
+	stringId, _ := strconv.Atoi(id)
+	dislikedPosts := postServer.postRepo.GetDislikedPosts(stringId)
+	if dislikedPosts != nil {
+		RenderJSON(w, dislikedPosts)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
 }
 
 func (postServer *PostServer) SearchPublicPostsHandler(w http.ResponseWriter, req *http.Request) {

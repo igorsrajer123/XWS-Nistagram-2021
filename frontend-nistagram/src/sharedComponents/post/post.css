@@ -108,6 +108,18 @@
 
 .postLikeCounter{
     font-size: 15px;
+    margin: 5px;
+}
+
+.dislikeIcon{
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.postDislikeCounter{
+    font-size: 15px;
 }
 
 .postCommentText{

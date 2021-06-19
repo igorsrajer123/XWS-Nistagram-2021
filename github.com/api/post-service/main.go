@@ -30,7 +30,7 @@ func main() {
 	router.HandleFunc("/createStatusPost", server.CreateStatusPostHandler).Methods("POST")
 	router.HandleFunc("/getUserPosts/{userId}", server.GetUserStatusPostsHandler).Methods("GET")
 	router.HandleFunc("/likePost/{postId}/{currentId}", server.LikePostHandler).Methods("PUT")
-	router.HandleFunc("/dislikePost/{postId}", server.DislikePostHandler).Methods("PUT")
+	router.HandleFunc("/dislikePost/{postId}/{currentId}", server.DislikePostHandler).Methods("PUT")
 	router.HandleFunc("/searchPublicPosts/{searchParam}", server.SearchPublicPostsHandler).Methods("GET")
 	router.HandleFunc("/getAllPostPhotos", server.GetAllPostPhotosHandler).Methods("GET")
 	router.HandleFunc("/getPostPhoto/{imageID}", server.GetPostPictureHandler).Methods("GET")
@@ -50,6 +50,9 @@ func main() {
 	router.HandleFunc("/getHighlightedStories/{userId}", server.GetUserHighlightedStoriesHandler).Methods("GET")
 	router.HandleFunc("/addToHighlighted/{storyId}/{userId}", server.AddToHighlightedHandler).Methods("PUT")
 	router.HandleFunc("/removeFromHighlighted/{storyId}/{userId}", server.RemoveFromHighlightedHandler).Methods("PUT")
+
+	router.HandleFunc("/getLikedPosts/{userId}", server.GetLikedPostsHandler).Methods("GET")
+	router.HandleFunc("/getDislikedPosts/{userId}", server.GetDislikedPostsHandler).Methods("GET")
 
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {

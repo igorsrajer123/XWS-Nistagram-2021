@@ -26,18 +26,40 @@ async function createStatusPost(post){
     return data;
 }
 
-async function likePost(postId){
-    const url = "http://localhost:8000/api/post/likePost/" + postId;  
+async function likePost(postId, userId){
+    const url = "http://localhost:8000/api/post/likePost/" + postId + "/" + userId;  
     const response = await fetch(url, {
         method: "PUT"
     })
 }
 
-async function dislikePost(postId){
-    const url = "http://localhost:8000/api/post/dislikePost/" + postId;
+async function dislikePost(postId, userId){
+    const url = "http://localhost:8000/api/post/dislikePost/" + postId + "/" + userId;
     const response = await fetch(url, {
         method: "PUT"
     })
+}
+
+async function getLikedPosts(userId){
+    const url = "http://localhost:8000/api/post/getLikedPosts/" + userId;
+    const response = await fetch(url);
+    
+    if(response.status == 404)
+        return null;
+    
+    const data = await response.json();
+    return data;
+}
+
+async function getDislikedPosts(userId){
+    const url = "http://localhost:8000/api/post/getDislikedPosts/" + userId;
+    const response = await fetch(url);
+    
+    if(response.status == 404)
+        return null;
+    
+    const data = await response.json();
+    return data;
 }
 
 async function getHomepagePosts(userId){
@@ -145,5 +167,7 @@ export default{
     postNewComment,
     getFavouritePosts,
     addToFavourites,
-    removeFromFavourites
+    removeFromFavourites,
+    getLikedPosts,
+    getDislikedPosts
 }

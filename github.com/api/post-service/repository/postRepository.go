@@ -123,18 +123,274 @@ func (postRepo *PostRepository) LikePost(postId int, userId int) {
 	user := &userModel.User{}
 	postRepo.db.Where("id = ?", userId).Find(&user)
 
-	fmt.Println(user.LikedPosts)
+	userLikedPosts := user.LikedPosts
+	userDislikedPosts := user.DislikedPosts
+	if userLikedPosts == nil || len(userLikedPosts) == 0 {
+		fmt.Println("Nema lajkovanih postova!")
+		if userDislikedPosts == nil {
+			//ovo radi!
+			fmt.Println("Nema ni dislajkovanih postova!")
+			user.LikedPosts = append(user.LikedPosts, int64(postId))
+			statusPost.Likes = statusPost.Likes + 1
+			postRepo.db.Save(&statusPost)
+			postRepo.db.Save(&user)
+		} else {
+			isInDisliked := false
+			for _, post := range userDislikedPosts {
+				if post == int64(postId) {
+					isInDisliked = true
+					break
+				}
+			}
 
-	statusPost.Likes = statusPost.Likes + 1
-	postRepo.db.Save(&statusPost)
+			if !isInDisliked {
+				user.LikedPosts = append(user.LikedPosts, int64(postId))
+				statusPost.Likes = statusPost.Likes + 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			} else {
+				user.LikedPosts = append(user.LikedPosts, int64(postId))
+				for i, post := range userDislikedPosts {
+					if post == int64(postId) {
+						user.DislikedPosts = append(userDislikedPosts[:i], userDislikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Likes = statusPost.Likes + 1
+				statusPost.Dislikes = statusPost.Likes - 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+		}
+	} else {
+		fmt.Println("Ima lajkovanih postova!")
+		if userDislikedPosts == nil {
+			fmt.Println("Nema dislajkovanih postova!")
+			isInLiked := false
+			for _, post := range userLikedPosts {
+				if post == int64(postId) {
+					isInLiked = true
+					break
+				}
+			}
+
+			if isInLiked {
+				//ovo radi
+				fmt.Println("U lajkovanim je...")
+				for i, post := range user.LikedPosts {
+					if post == int64(postId) {
+						user.LikedPosts = append(user.LikedPosts[:i], user.LikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Likes = statusPost.Likes - 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			} else {
+				//ovo radi
+				fmt.Println("Nije u lajkovanim...")
+				user.LikedPosts = append(user.LikedPosts, int64(postId))
+				statusPost.Likes = statusPost.Likes + 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+		} else {
+			//ima i lajkovanih i dislajkovanih
+			isInLiked := false
+			isInDisliked := false
+			for _, post := range userLikedPosts {
+				if post == int64(postId) {
+					isInLiked = true
+					break
+				}
+			}
+
+			for _, post := range userDislikedPosts {
+				if post == int64(postId) {
+					isInDisliked = true
+					break
+				}
+			}
+
+			if isInLiked {
+				for i, post := range userLikedPosts {
+					if post == int64(postId) {
+						user.LikedPosts = append(userLikedPosts[:i], userLikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Likes = statusPost.Likes - 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+
+			if isInDisliked {
+				user.LikedPosts = append(user.LikedPosts, int64(postId))
+				for i, post := range userDislikedPosts {
+					if post == int64(postId) {
+						user.DislikedPosts = append(userDislikedPosts[:i], userDislikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Likes = statusPost.Likes + 1
+				statusPost.Dislikes = statusPost.Likes - 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+
+			if !isInDisliked && !isInLiked {
+				user.LikedPosts = append(user.LikedPosts, int64(postId))
+				statusPost.Likes = statusPost.Likes + 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+		}
+	}
 }
 
-func (postRepo *PostRepository) DislikePost(postId int) {
+func (postRepo *PostRepository) DislikePost(postId int, userId int) {
 	statusPost := &model.Post{}
 	postRepo.db.Where("id = ?", postId).Find(&statusPost)
 
-	statusPost.Likes = statusPost.Likes - 1
-	postRepo.db.Save(&statusPost)
+	user := &userModel.User{}
+	postRepo.db.Where("id = ?", userId).Find(&user)
+
+	userLikedPosts := user.LikedPosts
+	userDislikedPosts := user.DislikedPosts
+	if userLikedPosts == nil || len(userLikedPosts) == 0 {
+		fmt.Println("Nema lajkovanih postova!")
+		if userDislikedPosts == nil {
+			fmt.Println("Nema ni dislajkovanih postova!")
+			user.DislikedPosts = append(user.DislikedPosts, int64(postId))
+			statusPost.Dislikes = statusPost.Dislikes + 1
+			postRepo.db.Save(&statusPost)
+			postRepo.db.Save(&user)
+		} else {
+			isInDisliked := false
+			for _, post := range userDislikedPosts {
+				if post == int64(postId) {
+					isInDisliked = true
+					break
+				}
+			}
+
+			if !isInDisliked {
+				fmt.Println("Nije u dislajkovima...")
+				user.DislikedPosts = append(user.DislikedPosts, int64(postId))
+				statusPost.Dislikes = statusPost.Dislikes + 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			} else {
+				fmt.Println("U Dislajkovanim je...")
+				for i, post := range user.DislikedPosts {
+					if post == int64(postId) {
+						user.DislikedPosts = append(user.DislikedPosts[:i], user.DislikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Dislikes = statusPost.Dislikes - 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+		}
+	} else {
+		fmt.Println("Ima lajkovanih postova!")
+		if userDislikedPosts == nil {
+			fmt.Println("Nema dislajkovanih postova!")
+			isInLiked := false
+			for _, post := range userLikedPosts {
+				if post == int64(postId) {
+					isInLiked = true
+					break
+				}
+			}
+
+			if isInLiked {
+				fmt.Println("U lajkovanim je...")
+				for i, post := range user.LikedPosts {
+					if post == int64(postId) {
+						user.LikedPosts = append(user.LikedPosts[:i], user.LikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Likes = statusPost.Likes - 1
+				statusPost.Dislikes = statusPost.Dislikes + 1
+				user.DislikedPosts = append(user.DislikedPosts, int64(postId))
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			} else {
+				fmt.Println("Nije u lajkovanim...")
+				user.DislikedPosts = append(user.DislikedPosts, int64(postId))
+				statusPost.Dislikes = statusPost.Dislikes + 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+		} else {
+			//ima i lajkovanih i dislajkovanih
+			isInLiked := false
+			isInDisliked := false
+			for _, post := range userLikedPosts {
+				if post == int64(postId) {
+					isInLiked = true
+					break
+				}
+			}
+
+			for _, post := range userDislikedPosts {
+				if post == int64(postId) {
+					isInDisliked = true
+					break
+				}
+			}
+
+			if isInLiked {
+				for i, post := range userLikedPosts {
+					if post == int64(postId) {
+						user.LikedPosts = append(userLikedPosts[:i], userLikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Likes = statusPost.Likes - 1
+				statusPost.Dislikes = statusPost.Dislikes + 1
+				user.DislikedPosts = append(user.DislikedPosts, int64(postId))
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+
+			if isInDisliked {
+				for i, post := range userDislikedPosts {
+					if post == int64(postId) {
+						user.DislikedPosts = append(userDislikedPosts[:i], userDislikedPosts[i+1:]...)
+						break
+					}
+				}
+				statusPost.Dislikes = statusPost.Likes - 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+
+			if !isInDisliked && !isInLiked {
+				user.DislikedPosts = append(user.DislikedPosts, int64(postId))
+				statusPost.Dislikes = statusPost.Dislikes + 1
+				postRepo.db.Save(&statusPost)
+				postRepo.db.Save(&user)
+			}
+		}
+	}
+}
+
+func (postRepo *PostRepository) GetLikedPosts(userId int) pq.Int64Array {
+	var user userModel.User
+	postRepo.db.Where("id = ?", userId).Find(&user)
+
+	return user.LikedPosts
+}
+
+func (postRepo *PostRepository) GetDislikedPosts(userId int) pq.Int64Array {
+	var user userModel.User
+	postRepo.db.Where("id = ?", userId).Find(&user)
+
+	return user.DislikedPosts
 }
 
 func (postRepo *PostRepository) SearchPublicPosts(searchParameter string) []model.Post {
