@@ -5,6 +5,8 @@ import StoryService from './../../services/storyService';
 import PostService from './../../services/postService';
 import UserService from './../../services/userService';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import FlagIcon from '@material-ui/icons/Flag';
+import ReportModal from '../../pages/reportModal/ReportModal';
 
 export default class PreviewStory extends Component {
     constructor(props) {
@@ -18,10 +20,14 @@ export default class PreviewStory extends Component {
             storyDescription: "",
             storyLocation: "",
             storyTags: [],
-            userName: ""
+            userName: "",
+            randomId: 0
         }
 
+        this.reportStory = React.createRef();
+
         this.toggleModal = this.toggleModal.bind(this);
+        this.flagClick = this.flagClick.bind(this);
     }
 
     toggleModal = () => {
@@ -29,6 +35,11 @@ export default class PreviewStory extends Component {
             this.setState({ isOpen : false});
         else 
             this.setState({ isOpen : true});
+    }
+
+    flagClick = postId => {
+        this.setState({randomId: postId});
+        this.reportStory.current.toggleModal();
     }
 
     async componentDidUpdate(prevProps) {
@@ -62,6 +73,8 @@ export default class PreviewStory extends Component {
                         <div className="storyInfo">
                             <span className="storyItem" style={{fontWeight: 'bold', fontSize: '20px'}}><b>{this.state.userName}</b></span>
                             <span className="storyItem">{this.state.storyDate}</span>
+                            <FlagIcon onClick={() => this.flagClick(this.state.story.id)} style={{cursor: 'pointer'}}/>
+                            <ReportModal ref={this.reportStory} parentComponent='ReportStory' postId={this.state.randomId} />
                         </div>
                         <span className="storyInfo">{this.state.storyDescription}</span>
                         <div className="storyInfo">

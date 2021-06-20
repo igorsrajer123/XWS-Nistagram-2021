@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './post.css';
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import FlagIcon from '@material-ui/icons/Flag';
 import ProfilePicture from './../../assets/noPicture.jpg';
 import PostPicture from './../../assets/witchKing.jpg';
 import LikeIcon from './../../assets/like.png';
@@ -9,6 +10,7 @@ import UserService from './../../services/userService';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import PostService from './../../services/postService';
 import LoginService from './../../services/loginService';
+import ReportModal from '../../pages/reportModal/ReportModal';
 
 export default class Post extends Component {
     constructor(props) {
@@ -38,9 +40,12 @@ export default class Post extends Component {
             commentButtonVisible: false,
             currentUserId: 0,
             userProfile: false,
-            favouritePost: false
+            favouritePost: false,
+            randomId: 0
         };
     
+        this.reportPost = React.createRef();
+
         this.likeHandler = this.likeHandler.bind(this);
         this.dislikeHandler = this.dislikeHandler.bind(this);
         this.toggleComments = this.toggleComments.bind(this);
@@ -49,6 +54,7 @@ export default class Post extends Component {
         this.postComment = this.postComment.bind(this);
         this.addToFavourites = this.addToFavourites.bind(this);
         this.removeFromFavourites = this.removeFromFavourites.bind(this);
+        this.flagClick = this.flagClick.bind(this);
     }
 
     async likeHandler() {
@@ -74,6 +80,11 @@ export default class Post extends Component {
     toggleComments = () => this.setState({showCommentDiv: this.state.showCommentDiv ? false : true});
 
     commentTextChange = (event) => this.setState({commentText : event.target.value});
+
+    flagClick = postId => {
+        this.setState({randomId: postId});
+        this.reportPost.current.toggleModal();
+    }
 
     async postComment() {
         const object = {
@@ -216,7 +227,8 @@ export default class Post extends Component {
                             <input class="star" type="checkbox" style={{display: this.state.userProfile ? 'flex' : 'none', display: this.props.parentComponent == 'LikedPosts' ? 'none' : 'flex'}}
                                                                 checked={this.state.favouritePost ? '' : 'false'} 
                                                                 onClick={this.state.favouritePost ? this.removeFromFavourites : this.addToFavourites} />
-                            <MoreVertIcon />
+                            <FlagIcon onClick={() => this.flagClick(this.props.post.id)} style={{cursor: 'pointer'}}/>
+                            <ReportModal ref={this.reportPost} parentComponent='ReportPost' postId={this.state.randomId} />
                         </div>
                     </div>
                     <div className="postCenter">
