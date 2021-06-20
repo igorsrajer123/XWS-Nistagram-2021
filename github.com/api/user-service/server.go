@@ -519,3 +519,51 @@ func (userServer *UserServer) IsInCloseFriendsHandler(w http.ResponseWriter, req
 	isInCloseFriends := userServer.userRepo.IsInCloseFriends(currentUserId, userId)
 	RenderJSON(w, isInCloseFriends)
 }
+
+func (userServer *UserServer) GetAllValidationRequestsHandler(w http.ResponseWriter, req *http.Request) {
+	allRequests := userServer.userRepo.GetAllValidationRequests()
+
+	RenderJSON(w, allRequests)
+}
+
+func (userServer *UserServer) CreateValidationRequestHandler(w http.ResponseWriter, req *http.Request) {
+	req.ParseMultipartForm(32 << 20)
+	file, handle, err := req.FormFile("file")
+
+	defer file.Close()
+	absPath, _ := os.Getwd()
+
+	path := filepath.Join(absPath, "files", handle.Filename)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		http.Error(w, "Expected file", http.StatusBadRequest)
+		return
+	}
+
+	_, err = io.Copy(f, file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var savingFile model.UserFile
+	savingFile.Path = path
+	savingFile.Type = "IMAGE"
+
+	var request model.AccountValidationRequest
+	request.Category = req.PostFormValue("category")
+	request.FirstName = req.PostFormValue("firstName")
+	request.LastName = req.PostFormValue("lastName")
+	userId := req.PostFormValue("user")
+	request.UserId, _ = strconv.Atoi(userId)
+
+	requestId := userServer.userRepo.CreateValidationRequest(request.FirstName, request.LastName, request.UserId, request.Category)
+
+	err = userServer.userRepo.CreateDocumentPhoto(&savingFile, requestId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}

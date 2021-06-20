@@ -54,6 +54,9 @@ func main() {
 
 	router.HandleFunc("/isInCloseFriends/{currentId}/{userId}", server.IsInCloseFriendsHandler).Methods("GET")
 
+	router.HandleFunc("/getValidationRequests", server.GetAllValidationRequestsHandler).Methods("GET")
+	router.HandleFunc("/submitVerificationRequest", server.CreateValidationRequestHandler).Methods("POST")
+
 	srv := &http.Server{Addr: "0.0.0.0:8000", Handler: router}
 	go func() {
 		log.Println("User server starting...")

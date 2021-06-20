@@ -37,6 +37,7 @@ func New() (*UserRepository, error) {
 	userRepo.db.AutoMigrate(&model.User{})
 	userRepo.db.AutoMigrate(&model.FollowRequest{})
 	userRepo.db.AutoMigrate(&model.UserFile{})
+	userRepo.db.AutoMigrate(&model.AccountValidationRequest{})
 
 	return userRepo, nil
 }
@@ -391,4 +392,36 @@ func (userRepo *UserRepository) IsInCloseFriends(currentUserId string, userId st
 	}
 
 	return false
+}
+
+func (userRepo *UserRepository) GetAllValidationRequests() []model.AccountValidationRequest {
+	var validationRequests []model.AccountValidationRequest
+	userRepo.db.Find(&validationRequests)
+
+	return validationRequests
+}
+
+func (userRepo *UserRepository) CreateValidationRequest(firstName string, lastName string, userId int, category string) int {
+	request := model.AccountValidationRequest{
+		FirstName:  firstName,
+		LastName:   lastName,
+		UserId:     userId,
+		Category:   category,
+		Status:     "PENDING",
+		DocumentID: 0}
+
+	userRepo.db.Create(&request)
+	return request.ID
+}
+
+func (userRepo *UserRepository) CreateDocumentPhoto(file *model.UserFile, requestId int) error {
+	userRepo.db.Create(file)
+
+	var request model.AccountValidationRequest
+	userRepo.db.Where("id = ?", requestId).First(&request)
+
+	request.DocumentID = file.ID
+	userRepo.db.Save(&request)
+
+	return nil
 }

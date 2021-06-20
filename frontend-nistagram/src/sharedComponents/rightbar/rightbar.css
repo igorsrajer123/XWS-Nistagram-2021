@@ -1,7 +1,7 @@
 .rightbar{
     width: 20%;
     height: auto;
-    max-height: 380px;
+    max-height: 400px;
     border-style: ridge;
     display: flex;
     flex-direction: column;

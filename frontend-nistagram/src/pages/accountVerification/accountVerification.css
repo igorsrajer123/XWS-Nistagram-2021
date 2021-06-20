@@ -1,0 +1,83 @@
+.accountVerificationModal{
+    position: absolute;
+    top: 10%;
+    left: 25%;
+    background-color: lemonchiffon;
+    min-height: 53%;
+    max-height: 80%;
+    overflow-y: auto;
+    width: 50%;
+    overflow: 'auto';
+    outline: none;
+}
+
+.accountVerificationWrapper{
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+}
+
+.accountVerificationTop{
+    height: 30%;
+}
+
+.accountVerificationCenter{
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.accountVerificationBot{
+    height: 10%;
+}
+
+.accountVerificationCenterItem{
+    display: flex;
+    align-items: center;
+    margin: 20px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+}
+
+.accountVerificationItem{
+    font-size: 20px;
+    margin: 5px;
+}
+
+.accountVerificationItem:focus{
+    outline: none;
+}
+
+.accountVerificationInput{
+    width: 25%;
+    font-size: 15px;
+}
+
+.accountVerificationInput:focus{
+    outline: none;
+}
+
+.accountVerificationBot{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.submitAccountVerificationRequest{
+    height: 100%;
+    font-weight: bold;
+    font-size: 15px;
+    border-style: none;
+    background-color: green;
+    color: white;
+    transition: 0.9s;
+}
+
+.submitAccountVerificationRequest:hover{
+    color: green;
+    background-color: white;
+}

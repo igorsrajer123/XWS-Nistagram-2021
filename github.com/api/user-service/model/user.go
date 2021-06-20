@@ -38,3 +38,13 @@ type UserFile struct {
 	Path string `json:"path"`
 	Type string `json:"type"`
 }
+
+type AccountValidationRequest struct {
+	ID         int    `json:"id" gorm:"primaryKey"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	Category   string `json:"category"`
+	Status     string `json:"status"`
+	DocumentID uint   `json:"documentId"`
+	UserId     int    `json:"userId"`
+}
