@@ -4,6 +4,8 @@ import FavouritePosts from './../../pages/favouritePostsModal/FavouritePosts';
 import ViewCloseFriends from './../../pages/closeFriendsModals/ViewCloseFriends';
 import AddCloseFriends from './../../pages/closeFriendsModals/AddCloseFriends';
 import PreviewMyStories from './../../sharedComponents/storybar/PreviewMyStories';
+import LikedPosts from './../../pages/likedDislikedModals/LikedPosts';
+import DislikedPosts from './../../pages/likedDislikedModals/DislikedPosts';
 
 export default class Rightbar extends Component {
     constructor(props) {
@@ -13,6 +15,8 @@ export default class Rightbar extends Component {
         this.viewCloseFriends = React.createRef();
         this.addCloseFriends = React.createRef();
         this.viewMyStories = React.createRef();
+        this.likedPosts = React.createRef();
+        this.dislikedPosts = React.createRef();
     }
 
     favouritePostsModal = () => this.favouritePosts.current.toggleModal();
@@ -21,7 +25,11 @@ export default class Rightbar extends Component {
 
     addCloseFriendsModal = () => this.addCloseFriends.current.toggleModal();
 
-    viewMyStoriesModal = () => {this.viewMyStories.current.toggleModal();}
+    viewMyStoriesModal = () => this.viewMyStories.current.toggleModal();
+
+    viewLikedPostsModal = () => this.likedPosts.current.toggleModal();
+
+    viewDislikedPostsModal = () => this.dislikedPosts.current.toggleModal();
 
     render() {
         return (
@@ -30,14 +38,16 @@ export default class Rightbar extends Component {
                 <span className="rightbarItem" onClick={this.viewCloseFriendsModal}>View Close Friends</span>
                 <span className="rightbarItem" onClick={this.addCloseFriendsModal}>Add Close Friends</span>
                 <span className="rightbarItem" onClick={this.viewMyStoriesModal}>View My Stories</span>
-                <span className="rightbarItem">Liked Posts</span>
-                <span className="rightbarItem">Disliked Posts</span>
+                <span className="rightbarItem" onClick={this.viewLikedPostsModal}>Liked Posts</span>
+                <span className="rightbarItem" onClick={this.viewDislikedPostsModal}>Disliked Posts</span>
                 <span className="rightbarItem">Account Options</span>
                 <div>
                     <FavouritePosts ref={this.favouritePosts}/>
                     <ViewCloseFriends ref={this.viewCloseFriends} />
                     <AddCloseFriends ref={this.addCloseFriends} />
                     <PreviewMyStories ref={this.viewMyStories} />
+                    <LikedPosts ref={this.likedPosts} />
+                    <DislikedPosts ref={this.dislikedPosts} />
                 </div>
             </div>
         )

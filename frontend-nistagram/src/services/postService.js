@@ -10,6 +10,14 @@ async function getUserPosts(userId){
     return sortedData;
 }
 
+async function getPostById(postId){
+    const url = "http://localhost:8000/api/post/getPost/" + postId;  
+    const response = await fetch(url);
+
+    const data = await response.json();
+    return data;
+}
+
 async function createStatusPost(post){
     const url = "http://localhost:8000/api/post/createStatusPost";  
     const response = await fetch(url, {
@@ -169,5 +177,6 @@ export default{
     addToFavourites,
     removeFromFavourites,
     getLikedPosts,
-    getDislikedPosts
+    getDislikedPosts,
+    getPostById
 }

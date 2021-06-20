@@ -34,6 +34,7 @@ func main() {
 	router.HandleFunc("/searchPublicPosts/{searchParam}", server.SearchPublicPostsHandler).Methods("GET")
 	router.HandleFunc("/getAllPostPhotos", server.GetAllPostPhotosHandler).Methods("GET")
 	router.HandleFunc("/getPostPhoto/{imageID}", server.GetPostPictureHandler).Methods("GET")
+	router.HandleFunc("/getPost/{postId}", server.GetPostByIdHandler).Methods("GET")
 
 	router.HandleFunc("/addComment", server.CreateNewCommentHandler).Methods("POST")
 	router.HandleFunc("/getPostComments/{postId}", server.GetPostCommentsHandler).Methods("GET")

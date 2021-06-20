@@ -213,7 +213,7 @@ export default class Post extends Component {
                             <span className="postDate">{this.state.postDate}</span>
                         </div>
                         <div className="postTopRight">
-                            <input class="star" type="checkbox" style={{display: this.state.userProfile ? 'flex' : 'none'}}
+                            <input class="star" type="checkbox" style={{display: this.state.userProfile ? 'flex' : 'none', display: this.props.parentComponent == 'LikedPosts' ? 'none' : 'flex'}}
                                                                 checked={this.state.favouritePost ? '' : 'false'} 
                                                                 onClick={this.state.favouritePost ? this.removeFromFavourites : this.addToFavourites} />
                             <MoreVertIcon />

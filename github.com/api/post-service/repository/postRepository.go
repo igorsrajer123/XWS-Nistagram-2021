@@ -95,6 +95,13 @@ func (postRepo *PostRepository) CreateStory(description string, tags pq.StringAr
 	return story.ID
 }
 
+func (postRepo *PostRepository) GetPostById(postId string) model.Post {
+	var post model.Post
+	postRepo.db.Where("id = ?", postId).Find(&post)
+
+	return post
+}
+
 func (postRepo *PostRepository) GetStoryById(storyId string) model.Story {
 	var story model.Story
 	postRepo.db.Where("id = ?", storyId).Find(&story)
